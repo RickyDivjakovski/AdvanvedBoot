@@ -1,0 +1,48 @@
+#!/system/bin/sh
+
+##################################
+# Advanced Boot user preferences #
+#          0 no   1 yes          #
+##################################
+
+# enable/disable advanced boot
+setprop adv.boot.enabled 1
+
+# enable/disable user configuration file and path
+setprop adv.boot.user.configurable 1
+
+# enable/disable init.d and set init.d path
+setprop adv.boot.initd 1
+setprop adv.boot.initd.path /system/etc/init.d
+
+# enable/disable external init.d and set init.d path
+setprop adv.boot.external.initd 0
+setprop adv.boot.external.initd.path /sdcard/init.d
+
+# enable/disable zipalign on boot
+setprop adv.boot.zipalign.onboot 0
+
+# enable/disable move dalvik to /cache
+setprop adv.boot.dalviktocache 1
+
+# enable/disable battery tweaks
+setprop adv.boot.battery.tweaks 1
+
+# enable/disable bootanimation and bootsounds
+#setprop adv.boot.bootanimation 1
+#setprop adv.boot.bootsounds 1
+
+# enable/disable custom dpi
+#setprop adv.boot.dpimodding 0
+#setprop adv.boot.customdpi 0
+
+# enable sdcard readahead
+setprop adv.boot.sdcard.readahead 1
+setprop adv.boot.sdcard.readahead.value 2048
+
+#auto backup/restore rom settings
+#setprop adv.boot.backup.restore 1
+
+# enable/disable automount /system or /data as rw on boot
+setprop adv.boot.system.automount 0
+setprop adv.boot.data.automount 0

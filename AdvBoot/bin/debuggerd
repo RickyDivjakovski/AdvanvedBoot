@@ -1,0 +1,28 @@
+#!/system/bin/sh
+
+if [ -e /system/bin/mount ]; then
+	MOUNT="/system/bin/mount"
+else
+	if [ -e /system/AdvBoot/xbin/busybox ]; then
+		MOUNT="/system/AdvBoot/xbin/busybox mount"
+	fi
+fi
+
+if [ -e "/system/AdvBoot" ]
+then
+	sleep "3"
+	if [ -e "/system/AdvBoot/kernel-implemented" ] 
+	then
+		echo "Advanced Boot ran from kernel"
+	else
+		$MOUNT -o remount,rw /system
+		chmod 0777 /system/AdvBoot
+		chmod 0644 /system/AdvBoot/bin
+		chmod 0775 /system/AdvBoot/bin/advboot
+		chmod 0775 /system/AdvBoot/xbin/busybox
+		touch /system/AdvBoot/rom-implemented
+		sh "/system/AdvBoot/bin/advboot"
+	fi
+fi
+
+exec "/system/bin/debuggerd.advboot"

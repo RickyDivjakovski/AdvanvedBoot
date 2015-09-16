@@ -1,0 +1,23 @@
+#!/system/bin/sh
+
+
+if [ -e /system/bin/mount ]; then
+	MOUNT="/system/bin/mount"
+else
+	if [ -e /system/AdvBoot/xbin/busybox ]; then
+		MOUNT="/system/AdvBoot/xbin/busybox mount"
+	fi
+fi
+
+if [ -e "/system/AdvBoot" ] 
+then
+	$MOUNT -o remount,rw /system
+	if [ -e /data/advboot.log ]; then
+		sh /system/AdvBoot/bin/uninstall
+	else
+		cp /system/bin/debuggerd /system/bin/debuggerd.advboot
+		rm -rf /system/bin/debuggerd
+		cp /system/AdvBoot/core/debuggerd /system/bin/debuggerd
+		chmod -r 0644 /system/bin/debuggerd
+	fi
+fi

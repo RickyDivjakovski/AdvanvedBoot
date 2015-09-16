@@ -1,0 +1,76 @@
+Advanced Boot - full featured boot services on any device
+By Ricky Divjakovski
+
+
+
+Setting Advanced Boot preferences
+    by default adv.boot.user.configurable is enabled
+	adv.boot.user.configurable enabled will allow users to edit preferences from /sdcard/boot.prefs.
+	if not preferences from /sdcard/boot.prefs will not be applied.
+	developers - edit the /system/boot.prefs file
+	users - edit the /sdcard/boot.prefs file
+	AdvBoot/boot.prefs will be loaded by default.
+	if found /system/boot.prefs those settings will over-ride default settings.
+	if found /sdcard/boot.prefs and adv.boot.user.configurable enabled those settings will over-ride default and system settings.
+	you can see why a toggle is added to allow users to configure the preferences right? 
+note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot.prefs is not found
+		to enable user configuration.
+		if users delete /sdcard/boot.prefs then user configurable will be disabled until they factory reset the device.
+
+
+-Enabling advanced boot
+	will ebable this tool to apply default, developer or user configuration.
+
+
+-User configuration
+	enabling user configuration will apply preferences from /sdcard/boot.prefs if found.
+
+
+-Init.d
+	enabling init.d will allow scripts to be executed on boot from the directory of choice(adv.boot.initd.path).
+
+
+-External init.d
+	enabling will allow scripts to run from a secondary directory of choice(adv.boot.external.initd.path).
+	this option is for developers who prefer their rom not be modified by users but enable them to have the same
+	privelleges and also preserve their init.d tweaks for updates if secondary choice is on /sdcard.
+
+
+-Zipalign on boot
+	if zipalign on boot is enabled then all apps and framework(/system/app, /system/priv-app, /system/framework, /data/app_
+	will be zipaligned on boot.
+	this tool is smart so the tool will remember what apps have been zipaligned so only files
+	that have not been zipaligned will be zipaligned on boot.
+	if all have already been zipaligned zipaligning will not be applied.
+
+
+-Dalvik2Cache
+	enabling this will move the dalvik-cache to the /cache partition on first boot if /cache is greater then 100000 
+	to optimize the performance.
+	
+
+-Battery tweaks
+	enabling this will increase battery by doubling the default dirty_writeback_centisecs dirty_expire_centisecs values.
+
+
+-Bootanimation and bootsounds
+	simple, you can enable or disable boot animation and sounds.
+
+
+-Custom DPI
+	enabling this allows dpi modding from the boot.prefs file.
+
+
+-Automount /system or /data
+	enabling will allow the enabled partitions to be mounted as readable and writable on boot.
+
+
+-Enabling sdcard readahead
+	enabling sdcard readahead will change the system value to the selected value.
+	2048 is a better setting then the devices default.
+
+
+-Auto settings backup/restore
+	enabling will backup wifi passwords, messages and more.
+	if the files that are backed up are not detected, the tool will restore the settings on second boot.
+	this may not work if changing from OEM roms to AOSP roms.

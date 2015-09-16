@@ -1,0 +1,4 @@
+#!/system/bin/sh
+
+touch /system/AdvBoot/extinitran
+exit 0

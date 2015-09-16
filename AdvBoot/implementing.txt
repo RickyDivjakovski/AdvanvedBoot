@@ -1,0 +1,35 @@
+-User implementation
+To implement this as a user follow the following steps
+1. Flash the AdvancedBoot.zip in recovery
+2. Choose to install or remove Advanced Boot
+3. Reboot
+
+-Rom implementation
+To implement in rom follow the following steps
+1. Include AdvBoot in the /system/ directory of your rom
+2. Rename /system/bin/debuggerd to debuggerd.advboot
+3. Copy /system/AdvBoot/core/debuggerd into the /system/bin/ directory
+
+-Kernel implementation
+To implement in kernel follow the following steps
+1. Include AdvBoot in the /system/ directory of your rom
+2. Add the following lines to init.rc
+
+# Advanced boot - full featured boot services on any device
+    if [ -e /system/bin/mount ]; then
+        MOUNT="/system/bin/mount"
+    else
+        if [ -e /system/AdvBoot/xbin/busybox ]; then
+        MOUNT="/system/AdvBoot/xbin/busybox mount"
+        fi
+    fi
+    if [ -e "/system/AdvBoot" ]
+    then
+        $MOUNT -o remount,rw /system
+        chmod 0777 /system/AdvBoot
+        chmod 0644 /system/AdvBoot/bin
+        chmod 0775 /system/AdvBoot/bin/advboot
+        chmod 0775 /system/AdvBoot/xbin/busybox
+        touch /system/AdvBoot/kernel-implemented
+        sh "/system/AdvBoot/bin/advboot"
+    fi
