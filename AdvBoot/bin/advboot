@@ -24,20 +24,17 @@ fi
 $MOUNT -o remount,rw /system
 $MOUNT -o remount,rw /data
 
-echo "starting advanced boot log at $DATE $TIME" >> $ADVBOOT_LOG
-echo "system and data remounted as rw" >> $ADVBOOT_LOG
-$BUSYBOX chmod 777 $DEFAULT_PREFS
-
+chmod 777 $DEFAULT_PREFS
 sh "$DEFAULT_PREFS"
 BOOTPREFS=DEFAULT
 if [ -e "$SYSTEM_PREFS" ] 
 then
-	$BUSYBOX chmod 777 $SYSTEM_PREFS
+	chmod 777 $SYSTEM_PREFS
 	sh "$SYSTEM_PREFS"
 	BOOTPREFS=SYSTEM
 else
 	$BUSYBOX cp -f $DEFAULT_PREFS $SYSTEM_PREFS
-	$BUSYBOX chmod 777 $SYSTEM_PREFS
+	chmod 777 $SYSTEM_PREFS
 	sh "$SYSTEM_PREFS"
 	BOOTPREFS=SYSTEM
 fi
@@ -46,22 +43,25 @@ if [ $USRCONFGRBLE == 1 ]
 then
 	if [ -e "$USER_PREFS" ]
 	then
-		$BUSYBOX chmod 777 $USER_PREFS
+		chmod 777 $USER_PREFS
 		sh "$USER_PREFS"
 		BOOTPREFS=USER
 	else
 		if [ -e "$SYSTEM_PREFS" ] 
 		then
 			$BUSYBOX cp -f "$SYSTEM_PREFS" "$USER_PREFS"
-			$BUSYBOX chmod 777 $USER_PREFS
+			chmod 777 $USER_PREFS
 		else
 			$BUSYBOX cp -f "$DEFAULT_PREFS" "$USER_PREFS"
-			$BUSYBOX chmod 777 $USER_PREFS
+			chmod 777 $USER_PREFS
 		fi
 		sh "$USER_PREFS"
 		BOOTPREFS=USER
 	fi
 fi
+
+echo "starting advanced boot log at $DATE $TIME" >> $ADVBOOT_LOG
+echo "system and data remounted as rw" >> $ADVBOOT_LOG
 echo "applied $BOOTPREFS preferences" >> $ADVBOOT_LOG
 
 ADVBOOT=$(getprop adv.boot.enabled)
@@ -71,15 +71,14 @@ EXTINITD=$(getprop adv.boot.external.initd)
 EXTINITDPATH=$(getprop adv.boot.external.initd.path)
 DALVIK2CACHE=$(getprop adv.boot.dalviktocache)
 BTRYTWKS=$(getprop adv.boot.battery.tweaks)
-
+SDCARDREADAHEAD=$(getprop adv.boot.sdcard.readahead)
+SDCARDREADAHEADVALUE=$(getprop adv.boot.sdcard.readahead.value)
+BOOTANIM=$(getprop adv.boot.bootanimation)
+BOOTSNDS=$(getprop adv.boot.bootsounds)
 #ZIPALIGN=$(getprop adv.boot.zipalign.onboot)
-#BOOTANIM=$(getprop adv.boot.bootanimation)
-#BOOTSNDS=$(getprop adv.boot.bootsounds)
 #DPIMODDING=$(getprop adv.boot.dpimodding)
 #CUSTDPI=$(getprop adv.boot.customdpi)
 
-SDCARDREADAHEAD=$(getprop adv.boot.sdcard.readahead)
-SDCARDREADAHEADVALUE=$(getprop adv.boot.sdcard.readahead.value)
 SETTINGSBKP=$(getprop adv.boot.backup.enable)
 BUPUSERSTTINGS$(getprop adv.boot.backup.user.settings)
 BUPBTTRYSTATS$(getprop adv.boot.backup.battery.stats)
@@ -114,12 +113,11 @@ then
 		else
 			$BUSYBOX mkdir -p $INITDPATH
 			$BUSYBOX cp -f "/system/AdvBoot/00ADVBOOTINIT" "$INITDPATH"
-			$BUSYBOX chmod -r 777 $INITDPATH
+			chmod -r 777 $INITDPATH
 		fi
 	fi
 fi	
-
-if [ $INITD == 1 ]
+if [ $EXTINITD == 1 ]
 then
 	if [ -e /system/AdvBoot/extinitran ]
 	then
@@ -134,7 +132,7 @@ then
 		else
 			$BUSYBOX mkdir -p $EXTINITDPATH
 			$BUSYBOX cp -f "/system/AdvBoot/00ADVBOOTEXTINIT" "$EXTINITDPATH"
-			$BUSYBOX chmod -r 777 $EXTINITDPATH
+			chmod -r 777 $EXTINITDPATH
 		fi
 	fi
 fi	
@@ -172,6 +170,56 @@ if [ $SDCARDREADAHEAD == 1 ]
 then
 	echo "applying sdcard readahead to $SDCARDREADAHEADVALUE" >> $ADVBOOT_LOG
 	echo "$SDCARDREADAHEADVALUE" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
+fi	
+
+if [ $BOOTANIM == 0 ]
+then
+	echo "enabling boot animation" >> $ADVBOOT_LOG
+	if [ -e /system/media/bootanimation.zip.adv ]
+	then
+		mv "/system/media/bootanimation.zip.adv" "/system/media/bootanimation.zip"
+	else
+		if [ -e /system/media/bootsamsung.qmg.adv ]
+		then
+			mv "/system/media/bootsamsung.qmg.adv" "/system/media/bootsamsung.qmg"
+		fi
+	fi
+fi	
+if [ $BOOTANIM == 1 ]
+then
+	echo "disabling boot animation" >> $ADVBOOT_LOG
+	if [ -e /system/media/bootanimation.zip ]
+	then
+		mv "/system/media/bootanimation.zip" "/system/media/bootanimation.zip.adv"
+	else
+		if [ -e /system/media/bootsamsung.qmg ]
+		then
+			mv "/system/media/bootsamsung.qmg" "/system/media/bootsamsung.qmg.adv"
+		fi
+	fi
+fi	
+
+if [ $BOOTSNDS == 0 ]
+then
+	if [ -e /system/media/audio/ui/PowerOn.ogg.adv ]
+	then
+		mv "/system/media/audio/ui/PowerOn.ogg.adv" "/system/media/audio/ui/PowerOn.ogg"
+	fi
+	if [ -e /system/media/audio/ui/PowerOff.ogg.adv ]
+	then
+		mv "/system/media/audio/ui/PowerOff.ogg.adv" "/system/media/audio/ui/PowerOff.ogg"
+	fi
+fi	
+if [ $BOOTSNDS == 1 ]
+then
+	if [ -e /system/media/audio/ui/PowerOn.ogg ]
+	then
+		mv "/system/media/audio/ui/PowerOn.ogg" "/system/media/audio/ui/PowerOn.ogg.adv"
+	fi
+	if [ -e /system/media/audio/ui/PowerOff.ogg ]
+	then
+		mv "/system/media/audio/ui/PowerOff.ogg" "/system/media/audio/ui/PowerOff.ogg.adv"
+	fi
 fi	
 
 if [ $SETTINGSBKP == 1 ]
@@ -267,11 +315,11 @@ fi
 if [ -e /system/AdvBoot/kernel-implemented ]
 then
 	rm -rf /system/AdvBoot/kernel-implemented
-fi
-
-if [ -e /system/AdvBoot/rom-implemented ]
-then
-	rm -rf /system/AdvBoot/rom-implemented
+else
+	if [ -e /system/AdvBoot/rom-implemented ]
+	then
+		rm -rf /system/AdvBoot/rom-implemented
+	fi
 fi
 
 echo "advanced boot finished $date" >> $ADVBOOT_LOG
@@ -284,7 +332,6 @@ else
 	echo "mounting system as ro"
 	$MOUNT -o remount,ro /system
 fi
-
 if [ $DATAUTOMNT == 1 ]
 then
 	echo "keeping data mounted as rw"
@@ -293,5 +340,5 @@ else
 	$MOUNT -o remount,ro /data
 fi
 
-exit 0
+exit 
 	
