@@ -56,6 +56,9 @@ setprop adv.boot.backup.bluetooth.settings 1
 # backup wifi settings
 setprop adv.boot.backup.wifi.settings 1
 
+# auto restore settings(if /data/advboot.log not found)
+setprop adv.boot.autorestore.enable 0
+
 # enable/disable automount /system or /data as rw on boot
 setprop adv.boot.system.automount 0
 setprop adv.boot.data.automount 0

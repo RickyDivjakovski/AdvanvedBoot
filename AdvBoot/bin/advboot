@@ -3,6 +3,7 @@
 DEFAULT_PREFS=/system/AdvBoot/prefs/boot.prefs
 SYSTEM_PREFS=/system/boot.prefs
 USER_PREFS=/sdcard/boot.prefs
+ADVBOOT_BACKUP=/sdcard/AdvBootBackups/backup.tar
 ADVBOOT_LOG=/data/advboot.log
 BUSYBOX=/system/AdvBoot/xbin/busybox
 DATE=$(date)
@@ -60,10 +61,22 @@ then
 	fi
 fi
 
+AUTORESTORE=$(adv.boot.autorestore.enable)
+if [ $AUTORESTORE == 1 ]
+then
+	if [ ! -e $ADVBOOT_LOG ]
+	then
+		if [ -e $ADVBOOT_BACKUP ]
+		then
+			tar -xf $ADVBOOT_BACKUP
+			echo "autorestore process complete" >> $ADVBOOT_LOG
+		fi
+	fi
+fi
+
 echo "starting advanced boot log at $DATE $TIME" >> $ADVBOOT_LOG
 echo "system and data remounted as rw" >> $ADVBOOT_LOG
 echo "applied $BOOTPREFS preferences" >> $ADVBOOT_LOG
-
 ADVBOOT=$(getprop adv.boot.enabled)
 INITD=$(getprop adv.boot.initd)
 INITDPATH=$(getprop adv.boot.initd.path)
@@ -309,7 +322,7 @@ if [ $SETTINGSBKP == 1 ]
 	then
 		rm -rf /sdcard/AdvBootBackups/backup.tar
 	fi
-	$BUSYBOX tar -cz $BUPUSERSTTINGS $BUPBTTRYSTATS $BUPPHILZSTTINGS $BUPDWNLDAPPS $BUPBLTOOTHSTTNGS $BUPWIFISTTNGS -f /sdcard/AdvBootBackups/backup.tar
+	$BUSYBOX tar -cz $BUPUSERSTTINGS $BUPBTTRYSTATS $BUPPHILZSTTINGS $BUPDWNLDAPPS $BUPBLTOOTHSTTNGS $BUPWIFISTTNGS -f $ADVBOOT_BACKUP
 fi
 
 if [ -e /system/AdvBoot/kernel-implemented ]
