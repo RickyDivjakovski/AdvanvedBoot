@@ -7,44 +7,40 @@ ADVBOOT_LOG=/data/advboot.log
 BUSYBOX=/system/AdvBoot/xbin/busybox
 DATE=$(date)
 
-if [ -e /system/bin/mount ]; then
+if [ -e /system/bin/mount ] 
+then
 	MOUNT="/system/bin/mount"
 else
-	if [ -e /system/AdvBoot/xbin/busybox ]; then
-		MOUNT="/system/AdvBoot/xbin/busybox mount"
+	if [ -e /system/bin/busybox ]
+	then
+		MOUNT="/system/bin/busybox mount"
+	else
+		if [ -e /system/AdvBoot/xbin/busybox ]
+		then
+			MOUNT="/system/AdvBoot/xbin/busybox mount"
+		fi
 	fi
 fi
-
-if [ -e "$ADVBOOT_LOG" ] 
-then
-	$MOUNT -o remount,rw /system
-	$MOUNT -o remount,rw /data
-else
-	$MOUNT -o remount,rw /system
-	$MOUNT -o remount,rw /data
-	echo "advanced boot first boot $DATE" >> $ADVBOOT_LOG
-fi
+$MOUNT -o remount,rw /system
+$MOUNT -o remount,rw /data
 
 echo "starting advanced boot log at $DATE $TIME" >> $ADVBOOT_LOG
 echo "system and data remounted as rw" >> $ADVBOOT_LOG
 $BUSYBOX chmod 777 $DEFAULT_PREFS
 
 sh "$DEFAULT_PREFS"
-echo "loading default preferences" >> $ADVBOOT_LOG
+BOOTPREFS=DEFAULT
 if [ -e "$SYSTEM_PREFS" ] 
 then
 	$BUSYBOX chmod 777 $SYSTEM_PREFS
 	sh "$SYSTEM_PREFS"
-	echo "loading system preferences" >> $ADVBOOT_LOG
-	echo "default preferences over-ruled" >> $ADVBOOT_LOG
+	BOOTPREFS=SYSTEM
 else
 	$BUSYBOX cp -f $DEFAULT_PREFS $SYSTEM_PREFS
 	$BUSYBOX chmod 777 $SYSTEM_PREFS
 	sh "$SYSTEM_PREFS"
-	echo "loading system preferences" >> $ADVBOOT_LOG
-	echo "default preferences over-ruled" >> $ADVBOOT_LOG
+	BOOTPREFS=SYSTEM
 fi
-
 USRCONFGRBLE=$(getprop adv.boot.user.configurable)
 if [ $USRCONFGRBLE == 1 ]
 then
@@ -52,8 +48,7 @@ then
 	then
 		$BUSYBOX chmod 777 $USER_PREFS
 		sh "$USER_PREFS"
-		echo "loading user preferences" >> $ADVBOOT_LOG
-		echo "system preferences over-ruled" >> $ADVBOOT_LOG
+		BOOTPREFS=USER
 	else
 		if [ -e "$SYSTEM_PREFS" ] 
 		then
@@ -64,36 +59,27 @@ then
 			$BUSYBOX chmod 777 $USER_PREFS
 		fi
 		sh "$USER_PREFS"
-		echo "loading system preferences" >> $ADVBOOT_LOG
-		echo "default preferences over-ruled" >> $ADVBOOT_LOG
+		BOOTPREFS=USER
 	fi
 fi
-
 echo "applied $BOOTPREFS preferences" >> $ADVBOOT_LOG
 
 ADVBOOT=$(getprop adv.boot.enabled)
-
 INITD=$(getprop adv.boot.initd)
 INITDPATH=$(getprop adv.boot.initd.path)
-
 EXTINITD=$(getprop adv.boot.external.initd)
 EXTINITDPATH=$(getprop adv.boot.external.initd.path)
-
-# ZIPALIGN=$(getprop adv.boot.zipalign.onboot)
-
 DALVIK2CACHE=$(getprop adv.boot.dalviktocache)
-
 BTRYTWKS=$(getprop adv.boot.battery.tweaks)
 
+#ZIPALIGN=$(getprop adv.boot.zipalign.onboot)
 #BOOTANIM=$(getprop adv.boot.bootanimation)
 #BOOTSNDS=$(getprop adv.boot.bootsounds)
-
 #DPIMODDING=$(getprop adv.boot.dpimodding)
 #CUSTDPI=$(getprop adv.boot.customdpi)
 
 SDCARDREADAHEAD=$(getprop adv.boot.sdcard.readahead)
 SDCARDREADAHEADVALUE=$(getprop adv.boot.sdcard.readahead.value)
-
 SETTINGSBKP=$(getprop adv.boot.backup.enable)
 BUPUSERSTTINGS$(getprop adv.boot.backup.user.settings)
 BUPBTTRYSTATS$(getprop adv.boot.backup.battery.stats)
@@ -101,7 +87,6 @@ BUPPHILZSTTINGS$(getprop adv.boot.backup.philz.settings)
 BUPDWNLDAPPS$(getprop adv.boot.backup.downloaded.apps)
 BUPBLTOOTHSTTNGS$(getprop adv.boot.backup.bluetooth.settings)
 BUPWIFISTTNGS$(getprop adv.boot.backup.wifi.settings)
-
 SYSAUTOMNT=$(getprop adv.boot.system.automount)
 DATAUTOMNT=$(getprop adv.boot.data.automount)
 
@@ -163,13 +148,13 @@ then
 		echo "moving dalvik-cache to cache" >> $ADVBOOT_LOG
 		if [ -e /cache/dalvik-cache ]
 		then
-			$BUSYBOX mv /data/dalvik-cache /cache/dalvik-cache 
+			mv /data/dalvik-cache /cache/dalvik-cache 
 		fi
-		$BUSYBOX chown 1000:1000 /cache/dalvik-cache
-		$BUSYBOX chmod 0771 /cache/dalvik-cache
-		$BUSYBOX mount -o bind /cache/dalvik-cache /data/dalvik-cache
-		$BUSYBOX chown 1000:1000 /data/dalvik-cache
-		$BUSYBOX chmod 0771 /data/dalvik-cache
+		chown 1000:1000 /cache/dalvik-cache
+		chmod 0771 /cache/dalvik-cache
+		$MOUNT mount -o bind /cache/dalvik-cache /data/dalvik-cache
+		chown 1000:1000 /data/dalvik-cache
+		chmod 0771 /data/dalvik-cache
 	else
 		echo "cache $CACHESIZE is too small" >> $ADVBOOT_LOG
 		echo "skipping dalvik-cache to cache" >> $ADVBOOT_LOG
