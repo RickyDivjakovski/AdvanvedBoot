@@ -2,8 +2,9 @@
 
 DEFAULT_PREFS=/system/AdvBoot/prefs/boot.prefs
 SYSTEM_PREFS=/system/boot.prefs
-USER_PREFS=/sdcard/boot.prefs
-ADVBOOT_BACKUP=/sdcard/AdvBootBackups/backup.tar
+ADVBOOT_WORK=/sdcard/AdvBoot
+USER_PREFS=$ADVBOOT_WORK/boot.prefs
+ADVBOOT_BACKUP=$ADVBOOT_WORK/backups/backup.tar
 ADVBOOT_LOG=/data/advboot.log
 BUSYBOX=/system/AdvBoot/xbin/busybox
 DATE=$(date)
@@ -21,6 +22,10 @@ else
 			MOUNT="/system/AdvBoot/xbin/busybox mount"
 		fi
 	fi
+fi
+if [ ! -e $ADVBOOT_WORK ]
+then
+	mkdir -p $ADVBOOT_WORK
 fi
 $MOUNT -o remount,rw /system
 $MOUNT -o remount,rw /data
@@ -69,6 +74,7 @@ then
 		if [ -e $ADVBOOT_BACKUP ]
 		then
 			tar -xf $ADVBOOT_BACKUP
+			cp $ADVBOOT_WORK/advboot.log $ADVBOOT_LOG
 			echo "autorestore process complete" >> $ADVBOOT_LOG
 		fi
 	fi
@@ -336,7 +342,17 @@ else
 fi
 
 echo "advanced boot finished $date" >> $ADVBOOT_LOG
-echo " " >> $ADVBOOT_LOG
+echo " " >> $ADVBOOT_LOG]
+if [ -e $ADVBOOT_LOG ]
+then
+	if [ -e $ADVBOOT_WORK/advboot.log ]
+	then
+		rm -rf $ADVBOOT_WORK/advboot.log
+		cp $ADVBOOT_LOG $ADVBOOT_WORK/advboot.log
+	else
+		cp $ADVBOOT_LOG $ADVBOOT_WORK/advboot.log
+	fi
+fi
 
 if [ $SYSAUTOMNT == 1 ]
 then
