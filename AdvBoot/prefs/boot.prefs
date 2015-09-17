@@ -40,8 +40,21 @@ setprop adv.boot.battery.tweaks 1
 setprop adv.boot.sdcard.readahead 1
 setprop adv.boot.sdcard.readahead.value 2048
 
-#auto backup/restore rom settings
-#setprop adv.boot.backup.restore 1
+# auto backup rom settings selected
+setprop adv.boot.backup.enable 0
+# only backs up following if adv.boot.backup.enable is set 1
+# backup user settings
+setprop adv.boot.backup.user.settings 1
+# backup battery stats
+setprop adv.boot.backup.battery.stats 0
+# backup philz recovery settings
+setprop adv.boot.backup.philz.settings 1
+# backup downloaded applications
+setprop adv.boot.backup.downloaded.apps 0
+# backup bluetooth settings
+setprop adv.boot.backup.bluetooth.settings 1
+# backup wifi settings
+setprop adv.boot.backup.wifi.settings 1
 
 # enable/disable automount /system or /data as rw on boot
 setprop adv.boot.system.automount 0

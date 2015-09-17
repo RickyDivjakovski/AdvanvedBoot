@@ -69,41 +69,39 @@ then
 	fi
 fi
 
-echo "applied preferences" >> $ADVBOOT_LOG
-echo "advanced boot enabled:$(getprop adv.boot.enabled)" >> $ADVBOOT_LOG
-echo "user configurable:$(getprop adv.boot.user.configurable)" >> $ADVBOOT_LOG
-echo "init.d enabled:$(getprop adv.boot.initd)" >> $ADVBOOT_LOG
-echo "init.d path if enabled:$(getprop adv.boot.initd.path)" >> $ADVBOOT_LOG
-echo "external init.d enabled:$(getprop adv.boot.external.initd)" >> $ADVBOOT_LOG
-echo "external init.d path if enabled:$(getprop adv.boot.external.initd.path)" >> $ADVBOOT_LOG
-# echo "zipalign on boot:$(getprop adv.boot.zipalign.onboot)" >> $ADVBOOT_LOG
-echo "dalvik2cache enabled:$(getprop adv.boot.dalviktocache)" >> $ADVBOOT_LOG
-echo "battery tweaks enabled:$(getprop adv.boot.battery.tweaks)" >> $ADVBOOT_LOG
-#echo "bootanimation enabled:$(getprop adv.boot.bootanimation)" >> $ADVBOOT_LOG
-#echo "bootsounds enabled:$(getprop adv.boot.bootsounds)" >> $ADVBOOT_LOG
-#echo "dpi modding enabled:$(getprop adv.boot.dpimodding)" >> $ADVBOOT_LOG
-#echo "custom dpi if enabled:$(getprop adv.boot.customdpi)" >> $ADVBOOT_LOG
-echo "sdcard readahead enabled:$(getprop adv.boot.sdcard.readahead)" >> $ADVBOOT_LOG
-echo "sdcard readahead value if enabled:$(getprop adv.boot.sdcard.readahead.value)" >> $ADVBOOT_LOG
-#echo "system settings backup/restore enabled:$(getprop adv.boot.backup.restore)" >> $ADVBOOT_LOG
-echo "system automount enabled:$(getprop adv.boot.system.automount)" >> $ADVBOOT_LOG
-echo "data automount enabled:$(getprop adv.boot.data.automount)" >> $ADVBOOT_LOG
+echo "applied $BOOTPREFS preferences" >> $ADVBOOT_LOG
 
 ADVBOOT=$(getprop adv.boot.enabled)
+
 INITD=$(getprop adv.boot.initd)
 INITDPATH=$(getprop adv.boot.initd.path)
+
 EXTINITD=$(getprop adv.boot.external.initd)
 EXTINITDPATH=$(getprop adv.boot.external.initd.path)
+
 # ZIPALIGN=$(getprop adv.boot.zipalign.onboot)
+
 DALVIK2CACHE=$(getprop adv.boot.dalviktocache)
+
 BTRYTWKS=$(getprop adv.boot.battery.tweaks)
+
 #BOOTANIM=$(getprop adv.boot.bootanimation)
 #BOOTSNDS=$(getprop adv.boot.bootsounds)
+
 #DPIMODDING=$(getprop adv.boot.dpimodding)
 #CUSTDPI=$(getprop adv.boot.customdpi)
+
 SDCARDREADAHEAD=$(getprop adv.boot.sdcard.readahead)
 SDCARDREADAHEADVALUE=$(getprop adv.boot.sdcard.readahead.value)
-#SETTINGSBKP=$(getprop adv.boot.backup.restore)
+
+SETTINGSBKP=$(getprop adv.boot.backup.enable)
+BUPUSERSTTINGS$(getprop adv.boot.backup.user.settings)
+BUPBTTRYSTATS$(getprop adv.boot.backup.battery.stats)
+BUPPHILZSTTINGS$(getprop adv.boot.backup.philz.settings)
+BUPDWNLDAPPS$(getprop adv.boot.backup.downloaded.apps)
+BUPBLTOOTHSTTNGS$(getprop adv.boot.backup.bluetooth.settings)
+BUPWIFISTTNGS$(getprop adv.boot.backup.wifi.settings)
+
 SYSAUTOMNT=$(getprop adv.boot.system.automount)
 DATAUTOMNT=$(getprop adv.boot.data.automount)
 
@@ -190,6 +188,96 @@ then
 	echo "applying sdcard readahead to $SDCARDREADAHEADVALUE" >> $ADVBOOT_LOG
 	echo "$SDCARDREADAHEADVALUE" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
 fi	
+
+if [ $SETTINGSBKP == 1 ]
+	if [ $BUPUSERSTTINGS == 1 ]
+	then
+		echo "backing up users" >> $ADVBOOT_LOG
+		if [ -e /data/system/users ]
+		then
+			USRSTTINGS=/data/system/users
+		fi
+	else
+		USRSTTINGS=" "
+	fi	
+	if [ $BUPBTTRYSTATS == 1 ]
+	then
+		echo "backing up battery stats" >> $ADVBOOT_LOG
+		if [ -e /data/system/batterystats.bin ]
+		then
+			BTTRYSTATS=/data/system/batterystats.bin
+		fi
+	else
+		BTTRYSTATS=" "
+	fi	
+	if [ $BUPPHILZSTTINGS == 1 ]
+	then
+		echo "backing up philz settings" >> $ADVBOOT_LOG
+		if [ -e /data/philz-touch ]
+		then
+			PHILZSTTINGS=/data/philz-touch
+		fi
+		if [ -e /cache/philz-touch ]
+		then
+			if [ $PHILZSTTINGS == /data/philz-touch ]
+			then
+				PHILZSTTINGS=/data/philz-touch /cache/philz-touch
+			else
+				PHILZSTTINGS=/cache/philz-touch
+			fi
+		fi
+	else
+		PHILZSTTINGS=" "
+	fi	
+	if [ $BUPDWNLDAPPS == 1 ]
+	then
+		echo "backing up downloaded apps" >> $ADVBOOT_LOG
+		if [ -e /data/app ]
+		then
+			DWNLDAPPS=/data/app
+		fi
+	else
+		DWNLDAPPS=" "
+	fi	
+	if [ $BUPBLTOOTHSTTNGS == 1 ]
+	then
+		echo "backing up bluetooth settings" >> $ADVBOOT_LOG
+		if [ -e /data/misc/bluedroid ]
+		then
+			BLTOOTHSTTNGS=/data/misc/bluedroid
+		fi
+		if [ -e /data/misc/bluetooth ]
+		then
+			if [ $BLTOOTHSTTNGS == /data/misc/bluedroid ]
+			then
+				BLTOOTHSTTNGS=/data/misc/bluedroid /data/misc/bluetooth
+			else
+				BLTOOTHSTTNGS=/data/misc/bluetooth
+			fi
+		fi
+	else
+		BLTOOTHSTTNGS=" "
+	fi	
+	if [ $BUPWIFISTTNGS == 1 ]
+	then
+		echo "backing up wifi settings" >> $ADVBOOT_LOG
+		if [ -e /data/misc/wifi ]
+		then
+			WIFISTTNGS=/data/misc/wifi/*.conf
+		fi
+	else
+		WIFISTTNGS=" "
+	fi	
+	if [ ! -e /sdcard/AdvBootBackups ]
+	then
+		mkdir /sdcard/AdvBootBackups
+	fi
+	if [ -e /sdcard/AdvBootBackups/backup.tar ]
+	then
+		rm -rf /sdcard/AdvBootBackups/backup.tar
+	fi
+	$BUSYBOX tar -cz $BUPUSERSTTINGS $BUPBTTRYSTATS $BUPPHILZSTTINGS $BUPDWNLDAPPS $BUPBLTOOTHSTTNGS $BUPWIFISTTNGS -f /sdcard/AdvBootBackups/backup.tar
+fi
 
 if [ -e /system/AdvBoot/kernel-implemented ]
 then
