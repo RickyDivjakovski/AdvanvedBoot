@@ -223,50 +223,29 @@ fi
 
 if [ $DPIMODDING == 0 ]
 then
-	if [ -e /system/build.prop.orig ]
+	if [ -e /system/AdvBoot/orig.dpi ]
 	then
-		if [ -e /system/AdvBoot/build.prop ]
-		then
-			rm -rf /system/AdvBoot/build.prop
-			rm -rf /system/build.prop
-		fi
-		cp "/system/build.prop.orig" "/system/build.prop"
-		if [ -e /system/build.prop ]
-		then
-			chmod 644 /system/build.prop
-			rm -rf /system/build.prop.orig
-		else
-			mv "/system/build.prop.orig" "/system/build.prop"
-			chmod 644 /system/build.prop
-			rm -rf /system/build.prop.orig
-		fi
+		ORIGDPI=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
+		DPIFLAG=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
+		PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
+		chmod 644 /system/build.prop
 	fi
+else
+	chmod 644 /system/build.prop
 fi
 
 if [ $DPIMODDING == 1 ]
 then
-	if [ -e /system/AdvBoot/build.prop ]
-	then 
-		if [ -e /system/build.prop.orig ]
-		then
-			PREVDPI=$($BUSYBOX grep lcd_density /system/build.prop)
-			$BUSYBOX sed -i 's/$PREVDPI/ro.sf.lcd_density=$CUSTDPI/g' /system/AdvBoot/build.prop
-			chmod 644 /system/AdvBoot/build.prop
-		fi
+	DPIFLAG=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f1)
+	PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
+	if [ -e /system/AdvBoot/orig.dpi ]
+	then
+		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$CUSTDPI/g /system/build.prop
+		chmod 644 /system/build.prop
 	else
-		cp "/system/build.prop" "/system/AdvBoot/build.prop"
-		cp "/system/build.prop" "/system/build.prop.orig"
-		if [ -e /system/build.prop.orig ]
-		then
-			chmod 644 /system/AdvBoot/build.prop
-			rm -rf /system/build.prop
-			ln -s "/system/AdvBoot/build.prop" "/system/build.prop"
-			PREVDPI=$($BUSYBOX grep lcd_density build.prop)
-			$BUSYBOX sed -i 's/$PREVDPI/ro.sf.lcd_density=$CUSTDPI/g' /system/AdvBoot/build.prop
-			chmod 644 /system/AdvBoot/build.prop
-		else
-			rm -rf /system/AdvBoot/build.prop
-		fi
+		echo "$DPIFLAG=$PREVDPI" >> /system/AdvBoot/orig.dpi
+		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$CUSTDPI/g /system/build.prop
+		chmod 644 /system/build.prop
 	fi
 fi
 		
