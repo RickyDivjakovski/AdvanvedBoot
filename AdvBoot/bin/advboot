@@ -94,10 +94,11 @@ SDCARDREADAHEAD=$(getprop adv.boot.sdcard.readahead)
 SDCARDREADAHEADVALUE=$(getprop adv.boot.sdcard.readahead.value)
 BOOTANIM=$(getprop adv.boot.bootanimation)
 BOOTSNDS=$(getprop adv.boot.bootsounds)
-#ZIPALIGN=$(getprop adv.boot.zipalign.onboot)
-#DPIMODDING=$(getprop adv.boot.dpimodding)
-#CUSTDPI=$(getprop adv.boot.customdpi)
 
+#ZIPALIGN=$(getprop adv.boot.zipalign.onboot)
+
+DPIMODDING=$(getprop adv.boot.dpimodding)
+CUSTDPI=$(getprop adv.boot.customdpi)
 SETTINGSBKP=$(getprop adv.boot.backup.enable)
 BUPUSERSTTINGS$(getprop adv.boot.backup.user.settings)
 BUPBTTRYSTATS$(getprop adv.boot.backup.battery.stats)
@@ -191,31 +192,10 @@ then
 	echo "$SDCARDREADAHEADVALUE" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
 fi	
 
-if [ $BOOTANIM == 0 ]
-then
-	echo "enabling boot animation" >> $ADVBOOT_LOG
-	if [ -e /system/media/bootanimation.zip.adv ]
-	then
-		mv "/system/media/bootanimation.zip.adv" "/system/media/bootanimation.zip"
-	else
-		if [ -e /system/media/bootsamsung.qmg.adv ]
-		then
-			mv "/system/media/bootsamsung.qmg.adv" "/system/media/bootsamsung.qmg"
-		fi
-	fi
-fi	
 if [ $BOOTANIM == 1 ]
 then
 	echo "disabling boot animation" >> $ADVBOOT_LOG
-	if [ -e /system/media/bootanimation.zip ]
-	then
-		mv "/system/media/bootanimation.zip" "/system/media/bootanimation.zip.adv"
-	else
-		if [ -e /system/media/bootsamsung.qmg ]
-		then
-			mv "/system/media/bootsamsung.qmg" "/system/media/bootsamsung.qmg.adv"
-		fi
-	fi
+	setprop debug.sf.nobootanimation 1
 fi	
 
 if [ $BOOTSNDS == 0 ]
@@ -240,6 +220,56 @@ then
 		mv "/system/media/audio/ui/PowerOff.ogg" "/system/media/audio/ui/PowerOff.ogg.adv"
 	fi
 fi	
+
+if [ $DPIMODDING == 0 ]
+then
+	if [ -e /system/build.prop.orig ]
+	then
+		if [ -e /system/AdvBoot/build.prop ]
+		then
+			rm -rf /system/AdvBoot/build.prop
+			rm -rf /system/build.prop
+		fi
+		cp "/system/build.prop.orig" "/system/build.prop"
+		if [ -e /system/build.prop ]
+		then
+			chmod 644 /system/build.prop
+			rm -rf /system/build.prop.orig
+		else
+			mv "/system/build.prop.orig" "/system/build.prop"
+			chmod 644 /system/build.prop
+			rm -rf /system/build.prop.orig
+		fi
+	fi
+fi
+
+if [ $DPIMODDING == 1 ]
+then
+	if [ -e /system/AdvBoot/build.prop ]
+	then 
+		if [ -e /system/build.prop.orig ]
+		then
+			PREVDPI=$($BUSYBOX grep lcd_density /system/build.prop)
+			$BUSYBOX sed -i 's/$PREVDPI/ro.sf.lcd_density=$CUSTDPI/g' /system/AdvBoot/build.prop
+			chmod 644 /system/AdvBoot/build.prop
+		fi
+	else
+		cp "/system/build.prop" "/system/AdvBoot/build.prop"
+		cp "/system/build.prop" "/system/build.prop.orig"
+		if [ -e /system/build.prop.orig ]
+		then
+			chmod 644 /system/AdvBoot/build.prop
+			rm -rf /system/build.prop
+			ln -s "/system/AdvBoot/build.prop" "/system/build.prop"
+			PREVDPI=$($BUSYBOX grep lcd_density build.prop)
+			$BUSYBOX sed -i 's/$PREVDPI/ro.sf.lcd_density=$CUSTDPI/g' /system/AdvBoot/build.prop
+			chmod 644 /system/AdvBoot/build.prop
+		else
+			rm -rf /system/AdvBoot/build.prop
+		fi
+	fi
+fi
+		
 
 if [ $SETTINGSBKP == 1 ]
 	if [ $BUPUSERSTTINGS == 1 ]
