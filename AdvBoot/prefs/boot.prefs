@@ -1,64 +1,62 @@
-#!/system/bin/sh
-
 ##################################
 # Advanced Boot user preferences #
 #          0 no   1 yes          #
 ##################################
 
 # enable/disable advanced boot
-setprop adv.boot.enabled 1
+	AdvancedBootEnabled=1
 
 # enable/disable user configuration file and path
-setprop adv.boot.user.configurable 1
+	AdvancedBootUserConfigurable=1
 
 # enable/disable init.d and set init.d path
-setprop adv.boot.initd 1
-setprop adv.boot.initd.path /system/etc/init.d
+	AdvancedBootInitd=1
+	AdvancedBootInitdPath=/system/etc/init.d
 
 # enable/disable external init.d and set init.d path
-setprop adv.boot.external.initd 0
-setprop adv.boot.external.initd.path /sdcard/init.d
+	AdvancedBootExternalInitd=0
+	AdvancedBootExternalInitdPath=/sdcard/init.d
 
 # enable/disable zipalign on boot
-#setprop adv.boot.zipalign.onboot 0
+#	AdvancedBootZipalignOnBoot=0
 
 # enable/disable move dalvik to /cache
-setprop adv.boot.dalviktocache 1
+	AdvancedBootDalvikToCache=1
 
 # enable/disable battery tweaks
-setprop adv.boot.battery.tweaks 1
+	AdvancedBootBatteryTweaks=1
+	
+# enable sdcard readahead
+	AdvancedBootSdcardReadAhead=1
+	AdvancedBootSdcardReadAheadValue=2048
 
 # enable/disable bootanimation and bootsounds
-setprop adv.boot.bootanimation 1
-setprop adv.boot.bootsounds 1
+	AdvancedBootEnableBootAnimation=1
+	AdvancedBootEnableBootSounds=1
 
 # enable/disable custom dpi
-setprop adv.boot.dpimodding 0
-setprop adv.boot.customdpi 0
-
-# enable sdcard readahead
-setprop adv.boot.sdcard.readahead 1
-setprop adv.boot.sdcard.readahead.value 2048
+	AdvancedBootDpiModding=0
+	AdvancedBootCustomDpi=0
 
 # auto backup rom settings
-setprop adv.boot.backup.enable 0
+	AdvancedBootEnableBackup=0
 # only backs up following if adv.boot.backup.enable is set 1
 # backup user settings
-setprop adv.boot.backup.user.settings 1
+	AdvancedBootBackupUserSettings=1
 # backup battery stats
-setprop adv.boot.backup.battery.stats 0
+	AdvancedBootBackupBatteryStats=0
 # backup philz recovery settings
-setprop adv.boot.backup.philz.settings 1
+	AdvancedBootBackupPhilzSettings=1
 # backup downloaded applications
-setprop adv.boot.backup.downloaded.apps 0
+	AdvancedBootBackupDownloadedApps=0
 # backup bluetooth settings
-setprop adv.boot.backup.bluetooth.settings 1
+	AdvancedBootBackupBluetoothSettings=1
 # backup wifi settings
-setprop adv.boot.backup.wifi.settings 1
+	AdvancedBootBackupWifiSettings=1
 
 # auto restore settings(if /data/advboot.log not found)
-setprop adv.boot.autorestore.enable 0
+	AdvancedBootEnableAutoRestore=0
 
 # enable/disable automount /system or /data as rw on boot
-setprop adv.boot.system.automount 0
-setprop adv.boot.data.automount 0
+	AdvancedBootEnableSystemAutomount=0
+	AdvancedBootEnableDataAutomount=0

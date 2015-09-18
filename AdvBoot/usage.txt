@@ -84,4 +84,24 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 -Auto restore settings
 	if the tool detectes no /data/advboot.log then it will automatically restore the backed up settings
 	if enabled and a backup is present as the tool will know the /data partition has been wiped
-	soon to come: manual restore settings.
+	
+-To Do List
+	implement zipaligning on boot
+	fix dalvik2cache
+	implement manual settings restore
+	implement faster video streaming
+	implement better image view quallity
+	implement tcp buffer tweaks
+	implement google dns/custom dns
+	implement proximity sensor tweaks
+	implement enable/disable purgable assets
+	implement signal tweaks
+	implement enable/disable quick rebooting
+	implement enable/disable faster system scrolling speed
+	implement enable/disable GPU rendering
+	implement increase touch responsiveness
+	implement enable/disable bitcode verification
+	make Advanced Boot Configuration app
+	make aroma flashable .zip
+	add x86 and x64 device support
+	

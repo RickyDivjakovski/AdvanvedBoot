@@ -44,8 +44,7 @@ else
 	sh "$SYSTEM_PREFS"
 	BOOTPREFS=SYSTEM
 fi
-USRCONFGRBLE=$(getprop adv.boot.user.configurable)
-if [ $USRCONFGRBLE == 1 ]
+if [ $AdvancedBootUserConfigurable == 1 ]
 then
 	if [ -e "$USER_PREFS" ]
 	then
@@ -66,8 +65,16 @@ then
 	fi
 fi
 
-AUTORESTORE=$(adv.boot.autorestore.enable)
-if [ $AUTORESTORE == 1 ]
+if [ $AdvancedBootEnabled == 1 ]
+then
+	echo "running advanced boot" >> $ADVBOOT_LOG
+else
+	echo "advanced boot disabled" >> $ADVBOOT_LOG
+	echo "exiting advanced boot" >> $ADVBOOT_LOG
+	exit
+fi
+
+if [ $AdvancedBootEnableAutoRestore == 1 ]
 then
 	if [ ! -e $ADVBOOT_LOG ]
 	then
@@ -83,42 +90,8 @@ fi
 echo "starting advanced boot log at $DATE $TIME" >> $ADVBOOT_LOG
 echo "system and data remounted as rw" >> $ADVBOOT_LOG
 echo "applied $BOOTPREFS preferences" >> $ADVBOOT_LOG
-ADVBOOT=$(getprop adv.boot.enabled)
-INITD=$(getprop adv.boot.initd)
-INITDPATH=$(getprop adv.boot.initd.path)
-EXTINITD=$(getprop adv.boot.external.initd)
-EXTINITDPATH=$(getprop adv.boot.external.initd.path)
-DALVIK2CACHE=$(getprop adv.boot.dalviktocache)
-BTRYTWKS=$(getprop adv.boot.battery.tweaks)
-SDCARDREADAHEAD=$(getprop adv.boot.sdcard.readahead)
-SDCARDREADAHEADVALUE=$(getprop adv.boot.sdcard.readahead.value)
-BOOTANIM=$(getprop adv.boot.bootanimation)
-BOOTSNDS=$(getprop adv.boot.bootsounds)
 
-#ZIPALIGN=$(getprop adv.boot.zipalign.onboot)
-
-DPIMODDING=$(getprop adv.boot.dpimodding)
-CUSTDPI=$(getprop adv.boot.customdpi)
-SETTINGSBKP=$(getprop adv.boot.backup.enable)
-BUPUSERSTTINGS$(getprop adv.boot.backup.user.settings)
-BUPBTTRYSTATS$(getprop adv.boot.backup.battery.stats)
-BUPPHILZSTTINGS$(getprop adv.boot.backup.philz.settings)
-BUPDWNLDAPPS$(getprop adv.boot.backup.downloaded.apps)
-BUPBLTOOTHSTTNGS$(getprop adv.boot.backup.bluetooth.settings)
-BUPWIFISTTNGS$(getprop adv.boot.backup.wifi.settings)
-SYSAUTOMNT=$(getprop adv.boot.system.automount)
-DATAUTOMNT=$(getprop adv.boot.data.automount)
-
-if [ $ADVBOOT == 1 ]
-then
-	echo "running advanced boot" >> $ADVBOOT_LOG
-else
-	echo "advanced boot disabled" >> $ADVBOOT_LOG
-	echo "exiting advanced boot" >> $ADVBOOT_LOG
-	exit
-fi
-
-if [ $INITD == 1 ];
+if [ $AdvancedBootInitd == 1 ];
 then
 	if [ -e  /system/AdvBoot/initran ];
 	then
@@ -126,18 +99,18 @@ then
 		echo "skipping init.d execution" >> $ADVBOOT_LOG
 		rm -rf /system/AdvBoot/initran
 	else
-		if [ -e "$INITDPATH" ];
+		if [ -e $AdvancedBootInitdPath ];
 		then
 			echo "running init.d scripts" >> $ADVBOOT_LOG
-			$BUSYBOX run-parts $INITDPATH
+			$BUSYBOX run-parts $AdvancedBootInitdPath
 		else
-			$BUSYBOX mkdir -p $INITDPATH
-			$BUSYBOX cp -f "/system/AdvBoot/00ADVBOOTINIT" "$INITDPATH"
-			chmod -r 777 $INITDPATH
+			$BUSYBOX mkdir -p $AdvancedBootInitdPath
+			$BUSYBOX cp -f /system/AdvBoot/00ADVBOOTINIT $AdvancedBootInitdPath
+			chmod -r 777 $AdvancedBootInitdPath
 		fi
 	fi
 fi	
-if [ $EXTINITD == 1 ]
+if [ $AdvancedBootExternalInitd == 1 ]
 then
 	if [ -e /system/AdvBoot/extinitran ]
 	then
@@ -145,19 +118,19 @@ then
 		echo "skipping external init.d execution" >> $ADVBOOT_LOG
 		rm -rf /system/AdvBoot/extinitran
 	else
-		if [ -e "$EXTINITDPATH" ] 
+		if [ -e $AdvancedBootExternalInitdPath ] 
 		then
 			echo "running external init.d scripts" >> $ADVBOOT_LOG
-			$BUSYBOX run-parts $EXTINITDPATH
+			$BUSYBOX run-parts $AdvancedBootExternalInitdPath
 		else
-			$BUSYBOX mkdir -p $EXTINITDPATH
-			$BUSYBOX cp -f "/system/AdvBoot/00ADVBOOTEXTINIT" "$EXTINITDPATH"
-			chmod -r 777 $EXTINITDPATH
+			$BUSYBOX mkdir -p $AdvancedBootExternalInitdPath
+			$BUSYBOX cp -f /system/AdvBoot/00ADVBOOTEXTINIT $AdvancedBootExternalInitdPath
+			chmod -r 777 $AdvancedBootExternalInitdPath
 		fi
 	fi
 fi	
 
-if [ $DALVIK2CACHE == 1 ]
+if [ $AdvancedBootDalvikToCache == 1 ]
 then
 	CACHESIZE=$($BUSYBOX df -k /cache | $BUSYBOX tail -n1 | $BUSYBOX tr -s ' ' | $BUSYBOX cut -d ' ' -f2)
 	if [ $CACHESIZE -gt 100000 ]
@@ -179,26 +152,26 @@ then
 	fi
 fi	
 
-if [ $BTRYTWKS == 1 ]
+if [ $AdvancedBootBatteryTweaks == 1 ]
 then
 	echo "applying battery tweaks" >> $ADVBOOT_LOG
 	echo "400" > /proc/sys/vm/dirty_expire_centisecs
 	echo "1000" > /proc/sys/vm/dirty_writeback_centisecs
 fi	
 
-if [ $SDCARDREADAHEAD == 1 ]
+if [ $AdvancedBootSdcardReadAhead == 1 ]
 then
-	echo "applying sdcard readahead to $SDCARDREADAHEADVALUE" >> $ADVBOOT_LOG
-	echo "$SDCARDREADAHEADVALUE" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
+	echo "applying sdcard readahead to $AdvancedBootSdcardReadAheadValue" >> $ADVBOOT_LOG
+	echo "$AdvancedBootSdcardReadAheadValue" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
 fi	
 
-if [ $BOOTANIM == 1 ]
+if [ $AdvancedBootEnableBootAnimation == 1 ]
 then
 	echo "disabling boot animation" >> $ADVBOOT_LOG
 	setprop debug.sf.nobootanimation 1
 fi	
 
-if [ $BOOTSNDS == 0 ]
+if [ $AdvancedBootEnableBootSounds == 0 ]
 then
 	if [ -e /system/media/audio/ui/PowerOn.ogg.adv ]
 	then
@@ -209,7 +182,7 @@ then
 		mv "/system/media/audio/ui/PowerOff.ogg.adv" "/system/media/audio/ui/PowerOff.ogg"
 	fi
 fi	
-if [ $BOOTSNDS == 1 ]
+if [ $AdvancedBootEnableBootSounds == 1 ]
 then
 	if [ -e /system/media/audio/ui/PowerOn.ogg ]
 	then
@@ -221,7 +194,7 @@ then
 	fi
 fi	
 
-if [ $DPIMODDING == 0 ]
+if [ $AdvancedBootDpiModding == 0 ]
 then
 	if [ -e /system/AdvBoot/orig.dpi ]
 	then
@@ -234,100 +207,100 @@ else
 	chmod 644 /system/build.prop
 fi
 
-if [ $DPIMODDING == 1 ]
+if [ $AdvancedBootDpiModding == 1 ]
 then
 	DPIFLAG=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f1)
 	PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
 	if [ -e /system/AdvBoot/orig.dpi ]
 	then
-		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$CUSTDPI/g /system/build.prop
+		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
 		chmod 644 /system/build.prop
 	else
 		echo "$DPIFLAG=$PREVDPI" >> /system/AdvBoot/orig.dpi
-		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$CUSTDPI/g /system/build.prop
+		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
 		chmod 644 /system/build.prop
 	fi
 fi
 		
 
-if [ $SETTINGSBKP == 1 ]
-	if [ $BUPUSERSTTINGS == 1 ]
+if [ $AdvancedBootEnableBackup == 1 ]
+	if [ $AdvancedBootBackupUserSettings == 1 ]
 	then
 		echo "backing up users" >> $ADVBOOT_LOG
 		if [ -e /data/system/users ]
 		then
-			USRSTTINGS=/data/system/users
+			AdvancedBootBackupUserSettings=/data/system/users
 		fi
 	else
-		USRSTTINGS=" "
+		AdvancedBootBackupUserSettings=" "
 	fi	
-	if [ $BUPBTTRYSTATS == 1 ]
+	if [ $AdvancedBootBackupBatteryStats == 1 ]
 	then
 		echo "backing up battery stats" >> $ADVBOOT_LOG
 		if [ -e /data/system/batterystats.bin ]
 		then
-			BTTRYSTATS=/data/system/batterystats.bin
+			AdvancedBootBackupBatteryStats=/data/system/batterystats.bin
 		fi
 	else
-		BTTRYSTATS=" "
+		AdvancedBootBackupBatteryStats=" "
 	fi	
-	if [ $BUPPHILZSTTINGS == 1 ]
+	if [ $AdvancedBootBackupPhilzSettings == 1 ]
 	then
 		echo "backing up philz settings" >> $ADVBOOT_LOG
 		if [ -e /data/philz-touch ]
 		then
-			PHILZSTTINGS=/data/philz-touch
+			AdvancedBootBackupPhilzSettings=/data/philz-touch
 		fi
 		if [ -e /cache/philz-touch ]
 		then
-			if [ $PHILZSTTINGS == /data/philz-touch ]
+			if [ $AdvancedBootBackupPhilzSettings == /data/philz-touch ]
 			then
-				PHILZSTTINGS=/data/philz-touch /cache/philz-touch
+				AdvancedBootBackupPhilzSettings=/data/philz-touch /cache/philz-touch
 			else
-				PHILZSTTINGS=/cache/philz-touch
+				AdvancedBootBackupPhilzSettings=/cache/philz-touch
 			fi
 		fi
 	else
-		PHILZSTTINGS=" "
+		AdvancedBootBackupPhilzSettings=" "
 	fi	
-	if [ $BUPDWNLDAPPS == 1 ]
+	if [ $AdvancedBootBackupDownloadedApps == 1 ]
 	then
 		echo "backing up downloaded apps" >> $ADVBOOT_LOG
 		if [ -e /data/app ]
 		then
-			DWNLDAPPS=/data/app
+			AdvancedBootBackupDownloadedApps=/data/app
 		fi
 	else
-		DWNLDAPPS=" "
+		AdvancedBootBackupDownloadedApps=" "
 	fi	
-	if [ $BUPBLTOOTHSTTNGS == 1 ]
+	if [ $AdvancedBootBackupBluetoothSettings == 1 ]
 	then
 		echo "backing up bluetooth settings" >> $ADVBOOT_LOG
 		if [ -e /data/misc/bluedroid ]
 		then
-			BLTOOTHSTTNGS=/data/misc/bluedroid
+			AdvancedBootBackupBluetoothSettings=/data/misc/bluedroid
 		fi
 		if [ -e /data/misc/bluetooth ]
 		then
-			if [ $BLTOOTHSTTNGS == /data/misc/bluedroid ]
+			if [ $AdvancedBootBackupBluetoothSettings == /data/misc/bluedroid ]
 			then
-				BLTOOTHSTTNGS=/data/misc/bluedroid /data/misc/bluetooth
+				AdvancedBootBackupBluetoothSettings=/data/misc/bluedroid /data/misc/bluetooth
 			else
-				BLTOOTHSTTNGS=/data/misc/bluetooth
+				AdvancedBootBackupBluetoothSettings=/data/misc/bluetooth
 			fi
 		fi
 	else
-		BLTOOTHSTTNGS=" "
+		AdvancedBootBackupBluetoothSettings=" "
 	fi	
-	if [ $BUPWIFISTTNGS == 1 ]
+	if [ $AdvancedBootBackupWifiSettings == 1 ]
 	then
 		echo "backing up wifi settings" >> $ADVBOOT_LOG
 		if [ -e /data/misc/wifi ]
 		then
-			WIFISTTNGS=/data/misc/wifi/*.conf
+			AdvancedBootBackupWifiSettings=/data/misc/wifi/*.conf
 		fi
 	else
-		WIFISTTNGS=" "
+		AdvancedBootBackupWifiSettings=" "
 	fi	
 	if [ ! -e /sdcard/AdvBootBackups ]
 	then
@@ -337,7 +310,7 @@ if [ $SETTINGSBKP == 1 ]
 	then
 		rm -rf /sdcard/AdvBootBackups/backup.tar
 	fi
-	$BUSYBOX tar -cz $BUPUSERSTTINGS $BUPBTTRYSTATS $BUPPHILZSTTINGS $BUPDWNLDAPPS $BUPBLTOOTHSTTNGS $BUPWIFISTTNGS -f $ADVBOOT_BACKUP
+	$BUSYBOX tar -cz $AdvancedBootBackupUserSettings $AdvancedBootBackupBatteryStats $AdvancedBootBackupPhilzSettings $AdvancedBootBackupDownloadedApps $AdvancedBootBackupBluetoothSettings $AdvancedBootBackupWifiSettings -f $ADVBOOT_BACKUP
 fi
 
 if [ -e /system/AdvBoot/kernel-implemented ]
@@ -363,14 +336,14 @@ then
 	fi
 fi
 
-if [ $SYSAUTOMNT == 1 ]
+if [ $AdvancedBootEnableSystemAutomount == 1 ]
 then
 	echo "keeping system mounted as rw"
 else
 	echo "mounting system as ro"
 	$MOUNT -o remount,ro /system
 fi
-if [ $DATAUTOMNT == 1 ]
+if [ $AdvancedBootEnableDataAutomount == 1 ]
 then
 	echo "keeping data mounted as rw"
 else
