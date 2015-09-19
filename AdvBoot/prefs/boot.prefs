@@ -49,7 +49,7 @@
 
 # auto backup rom settings
 	AdvancedBootEnableBackup=0
-# only backs up following if adv.boot.backup.enable is set 1
+# only backs up following if AdvancedBootEnableBackup is set 1
 # backup user settings
 	AdvancedBootBackupUserSettings=1
 # backup battery stats
@@ -63,6 +63,8 @@
 # backup wifi settings
 	AdvancedBootBackupWifiSettings=1
 
+# restore backed up files on next reboot
+	AdvancedBootEnableManualRestore=0
 # auto restore settings(if /data/advboot.log not found)
 	AdvancedBootEnableAutoRestore=0
 

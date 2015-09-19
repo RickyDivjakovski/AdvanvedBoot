@@ -86,20 +86,43 @@ then
 		fi
 	fi
 fi
+if [ $AdvancedBootEnableManualRestore == 1 ]
+then
+	if [ -e $ADVBOOT_BACKUP ]
+	then
+		tar -xf $ADVBOOT_BACKUP
+		echo "manual restore process complete" >> $ADVBOOT_LOG
+	else
+		echo "no backup detected" >> $ADVBOOT_LOG
+		echo "skipping process" >> $ADVBOOT_LOG
+	fi
+	if [ $BOOTPREFS == "DEFAULT" ]
+	then
+		$BUSYBOX sed -i s/AdvancedBootEnableManualRestore=1/AdvancedBootEnableManualRestore=0/g $DEFAULT_PREFS
+	fi
+	if [ $BOOTPREFS == "SYSTEM" ]
+	then
+		$BUSYBOX sed -i s/AdvancedBootEnableManualRestore=1/AdvancedBootEnableManualRestore=0/g $SYSTEM_PREFS
+	fi
+	if [ $BOOTPREFS == "USER" ]
+	then
+		$BUSYBOX sed -i s/AdvancedBootEnableManualRestore=1/AdvancedBootEnableManualRestore=0/g $USER_PREFS
+	fi
+fi
 
 echo "starting advanced boot log at $DATE $TIME" >> $ADVBOOT_LOG
 echo "system and data remounted as rw" >> $ADVBOOT_LOG
 echo "applied $BOOTPREFS preferences" >> $ADVBOOT_LOG
 
-if [ $AdvancedBootInitd == 1 ];
+if [ $AdvancedBootInitd == 1 ]
 then
-	if [ -e  /system/AdvBoot/initran ];
+	if [ -e  /system/AdvBoot/initran ]
 	then
 		echo "init.d ran already" >> $ADVBOOT_LOG
 		echo "skipping init.d execution" >> $ADVBOOT_LOG
 		rm -rf /system/AdvBoot/initran
 	else
-		if [ -e $AdvancedBootInitdPath ];
+		if [ -e $AdvancedBootInitdPath ]
 		then
 			echo "running init.d scripts" >> $ADVBOOT_LOG
 			$BUSYBOX run-parts $AdvancedBootInitdPath

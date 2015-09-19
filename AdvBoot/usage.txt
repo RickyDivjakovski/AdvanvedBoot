@@ -87,6 +87,11 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	downloaded apps - your 3rd party installed apps(from google play/system app updates)
 	bluetooth settings - your bluetooth paired device settings
 	wifi settings - your connected wifi settings and mobileAP settings
+	
+	
+-Manual restore settings
+	enabling this will restore your previous backup with the tool on next boot
+	after the reboot it will then toggle then disable this to avoid cntinuosly restoring every boot
 
 
 -Auto restore settings
@@ -134,7 +139,6 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	
 -To Do List
 	implement zipaligning on boot
-	implement manual settings restore
 	make Advanced Boot Configuration app
 	make aroma flashable .zip
 	add x86 and x64 device support
