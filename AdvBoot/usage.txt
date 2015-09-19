@@ -37,40 +37,47 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	this option is for developers who prefer their rom not be modified by users but enable them to have the same
 	privelleges and also preserve their init.d tweaks for updates if secondary choice is on /sdcard.
 
+	
+-Bootanimation and bootsounds
+	simple, you can enable or disable boot animation and sounds.
+	
+	
+-No call delay
+	if you enable this you remove the short delay before making a phone call
+	
+	
+-Improving image, audio and video quallity
+	if you enable this it increases media quallity slightly
+	
+	
+-WMA and WMV playback
+	if you enable these you allow the device to decode WMA audio and WMV video files
+	
+	
+-Faster streaming
+	enabling this will increase the speed of streaming
+	
+	
+-System ADB notification
+	toggling this will allow you to show or remove the system ADB notification
 
+
+-Battery tweaks
+	enabling this will increase battery by doubling the default dirty_writeback_centisecs dirty_expire_centisecs values.
+
+	
+-Sdcard readahead
+	enabling sdcard readahead will change the system value to the selected value.
+	2048 is a better setting then the devices default.
+
+	
 -Zipalign on boot
 	if zipalign on boot is enabled then all apps and framework(/system/app, /system/priv-app, /system/framework, /data/app_
 	will be zipaligned on boot.
 	this tool is smart so the tool will remember what apps have been zipaligned so only files
 	that have not been zipaligned will be zipaligned on boot.
 	if all have already been zipaligned zipaligning will not be applied.
-
-
--Dalvik2Cache
-	enabling this will move the dalvik-cache to the /cache partition on first boot if /cache is greater then 100000 
-	to optimize the performance.
 	
-
--Battery tweaks
-	enabling this will increase battery by doubling the default dirty_writeback_centisecs dirty_expire_centisecs values.
-
-
--Bootanimation and bootsounds
-	simple, you can enable or disable boot animation and sounds.
-
-
--Custom DPI
-	enabling this allows dpi modding from the boot.prefs file.
-
-
--Automount /system or /data
-	enabling will allow the enabled partitions to be mounted as readable and writable on boot.
-
-
--Enabling sdcard readahead
-	enabling sdcard readahead will change the system value to the selected value.
-	2048 is a better setting then the devices default.
-
 
 -Auto settings backup
 	enabling this will give you the abillity to choose to backup the following
@@ -80,27 +87,54 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	downloaded apps - your 3rd party installed apps(from google play/system app updates)
 	bluetooth settings - your bluetooth paired device settings
 	wifi settings - your connected wifi settings and mobileAP settings
-	
+
+
 -Auto restore settings
 	if the tool detectes no /data/advboot.log then it will automatically restore the backed up settings
 	if enabled and a backup is present as the tool will know the /data partition has been wiped
+		
+
+-Dalvik2Cache
+	enabling this will move the dalvik-cache to the /cache partition on first boot if /cache is greater then 100000 
+	to optimize the performance.
+	
+
+-Custom DPI
+	enabling this allows dpi modding from the boot.prefs file.
+
+		
+	
+-Use googles DNS server
+	enabling this will make the device use googles DNS server by default
+	
+	
+-Fast reboot
+	enabling this will make your device "hibernate" instead of completely powering off
+	therfore booting quicker
+
+	
+-Increase device response
+	enabling this will increase the all-round response of your device
+	
+	
+-System performance tweaks
+	enabling this will increase your device performance slightly or dramatically
+	recommended to use this only if you have a backup before you apply it
+	
+	
+-Dalvik bitcode verification
+	disabling this increases your device speed and power the most
+	although some apps are said to crash randomly and its known to cause some small bugs
+	i recommend a backup before applying this
+
+	
+-Automount /system or /data
+	enabling will allow the enabled partitions to be mounted as readable and writable on boot.	
+
 	
 -To Do List
 	implement zipaligning on boot
-	fix dalvik2cache
 	implement manual settings restore
-	implement faster video streaming
-	implement better image view quallity
-	implement tcp buffer tweaks
-	implement google dns/custom dns
-	implement proximity sensor tweaks
-	implement enable/disable purgable assets
-	implement signal tweaks
-	implement enable/disable quick rebooting
-	implement enable/disable faster system scrolling speed
-	implement enable/disable GPU rendering
-	implement increase touch responsiveness
-	implement enable/disable bitcode verification
 	make Advanced Boot Configuration app
 	make aroma flashable .zip
 	add x86 and x64 device support

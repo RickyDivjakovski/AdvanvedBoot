@@ -17,11 +17,25 @@
 	AdvancedBootExternalInitd=0
 	AdvancedBootExternalInitdPath=/sdcard/init.d
 
-# enable/disable zipalign on boot
-#	AdvancedBootZipalignOnBoot=0
+# enable/disable bootanimation and bootsounds
+	AdvancedBootEnableBootAnimation=1
+	AdvancedBootEnableBootSounds=1
 
-# enable/disable move dalvik to /cache
-	AdvancedBootDalvikToCache=1
+# enable/disable no call delay
+	AdvancedBootNoCallDelay=1
+	
+# improve image, audio and video quallity
+	AdvancedBootImproveMediaQuallity=1
+
+# enable WMA audio and WMV video playback
+	AdvancedBootEnableWmaPlayback=1
+	AdvancedBootEnableWmvPlayback=1
+
+# enable/disable faster streaming
+	AdvancedBootEnableFasterStreaming=1
+
+# enable/disable system ADB notification
+	AdvancedBootEnableAdbNotification=1
 
 # enable/disable battery tweaks
 	AdvancedBootBatteryTweaks=1
@@ -30,13 +44,8 @@
 	AdvancedBootSdcardReadAhead=1
 	AdvancedBootSdcardReadAheadValue=2048
 
-# enable/disable bootanimation and bootsounds
-	AdvancedBootEnableBootAnimation=1
-	AdvancedBootEnableBootSounds=1
-
-# enable/disable custom dpi
-	AdvancedBootDpiModding=0
-	AdvancedBootCustomDpi=0
+# enable/disable zipalign on boot
+#	AdvancedBootZipalignOnBoot=0
 
 # auto backup rom settings
 	AdvancedBootEnableBackup=0
@@ -56,6 +65,32 @@
 
 # auto restore settings(if /data/advboot.log not found)
 	AdvancedBootEnableAutoRestore=0
+
+################ DANGER ################
+######### advanced user tweaks #########
+################ DANGER ################
+
+# enable/disable move dalvik to /cache
+	AdvancedBootDalvikToCache=1
+
+# enable/disable custom dpi
+	AdvancedBootDpiModding=0
+	AdvancedBootCustomDpi=0
+
+# use googles DNS
+	AdvancedBootUseGoogleDns=1
+
+# enable/disable fast reboot
+	AdvancedBootEnableFastReboot=0
+
+# increase device response
+	AdvancedBootIncreaseResponse=1
+
+# enable/disable system performance tweaks
+	AdvancedBootSysPerformanceTweaks=0
+
+# enable/disable dalvik bitcode verification
+	AdvancedBootEnableDalvikBitcode=1
 
 # enable/disable automount /system or /data as rw on boot
 	AdvancedBootEnableSystemAutomount=0

@@ -130,41 +130,6 @@ then
 	fi
 fi	
 
-if [ $AdvancedBootDalvikToCache == 1 ]
-then
-	CACHESIZE=$($BUSYBOX df -k /cache | $BUSYBOX tail -n1 | $BUSYBOX tr -s ' ' | $BUSYBOX cut -d ' ' -f2)
-	if [ $CACHESIZE -gt 100000 ]
-	then
-		echo "cache $CACHESIZE is big enough" >> $ADVBOOT_LOG
-		echo "moving dalvik-cache to cache" >> $ADVBOOT_LOG
-		if [ -e /cache/dalvik-cache ]
-		then
-			mv /data/dalvik-cache /cache/dalvik-cache 
-		fi
-		chown 1000:1000 /cache/dalvik-cache
-		chmod 0771 /cache/dalvik-cache
-		$MOUNT mount -o bind /cache/dalvik-cache /data/dalvik-cache
-		chown 1000:1000 /data/dalvik-cache
-		chmod 0771 /data/dalvik-cache
-	else
-		echo "cache $CACHESIZE is too small" >> $ADVBOOT_LOG
-		echo "skipping dalvik-cache to cache" >> $ADVBOOT_LOG
-	fi
-fi	
-
-if [ $AdvancedBootBatteryTweaks == 1 ]
-then
-	echo "applying battery tweaks" >> $ADVBOOT_LOG
-	echo "400" > /proc/sys/vm/dirty_expire_centisecs
-	echo "1000" > /proc/sys/vm/dirty_writeback_centisecs
-fi	
-
-if [ $AdvancedBootSdcardReadAhead == 1 ]
-then
-	echo "applying sdcard readahead to $AdvancedBootSdcardReadAheadValue" >> $ADVBOOT_LOG
-	echo "$AdvancedBootSdcardReadAheadValue" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
-fi	
-
 if [ $AdvancedBootEnableBootAnimation == 1 ]
 then
 	echo "disabling boot animation" >> $ADVBOOT_LOG
@@ -194,34 +159,69 @@ then
 	fi
 fi	
 
-if [ $AdvancedBootDpiModding == 0 ]
+if [ $AdvancedBootNoCallDelay == 1 ]
 then
-	if [ -e /system/AdvBoot/orig.dpi ]
-	then
-		ORIGDPI=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
-		DPIFLAG=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
-		PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
-		chmod 644 /system/build.prop
-	fi
-else
-	chmod 644 /system/build.prop
-fi
+	echo "enabling no call delay" >> $ADVBOOT_LOG
+	setprop ro.lge.proximity.delay 25
+	setprop mot.proximity.delay 25
+	setprop ro.telephony.call_ring.delay 0
+	setprop ring.delay 0
+fi	
 
-if [ $AdvancedBootDpiModding == 1 ]
+if [ $AdvancedBootImproveMediaQuallity == 1 ]
 then
-	DPIFLAG=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f1)
-	PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
-	if [ -e /system/AdvBoot/orig.dpi ]
-	then
-		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
-		chmod 644 /system/build.prop
-	else
-		echo "$DPIFLAG=$PREVDPI" >> /system/AdvBoot/orig.dpi
-		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
-		chmod 644 /system/build.prop
-	fi
-fi
-		
+	echo "enabling better media quallity" >> $ADVBOOT_LOG
+	setprop ro.media.dec.jpeg.memcap 8000000
+	setprop ro.media.enc.hprof.vid.bps 8000000
+	setprop ro.media.enc.jpeg.quality 100
+	setprop ro.media.panorama.defres 3264x1840
+	setprop ro.media.panorama.frameres 1280x720
+	setprop ro.camcorder.videoModes true
+	setprop debug.sf.hw 1
+fi	
+
+if [ $AdvancedBootEnableWmaPlayback == 1 ]
+then
+	echo "enabling WMA audio playback" >> $ADVBOOT_LOG
+	setprop ro.media.dec.aud.wma.enabled 1
+fi	
+if [ $AdvancedBootEnableWmvPlayback == 1 ]
+then
+	echo "enabling WMV vidio playback" >> $ADVBOOT_LOG
+	setprop ro.media.dec.vid.wmv.enabled 1
+fi	
+
+if [ $AdvancedBootEnableFasterStreaming == 1 ]
+then
+	echo "enabling faster streaming" >> $ADVBOOT_LOG
+	setprop media.stagefright.enable-player true 
+	setprop media.stagefright.enable-meta true 
+	setprop media.stagefright.enable-scan true
+	setprop media.stagefright.enable-http true
+	setprop media.stagefright.enable-record false
+fi	
+
+if [ $AdvancedBootEnableAdbNotification == 0 ]
+then
+	echo "disabling system ADB notification" >> $ADVBOOT_LOG
+	setprop persist.adb.notify 0
+fi	
+
+if [ $AdvancedBootBatteryTweaks == 1 ]
+then
+	echo "applying battery tweaks" >> $ADVBOOT_LOG
+	echo "400" > /proc/sys/vm/dirty_expire_centisecs
+	echo "1000" > /proc/sys/vm/dirty_writeback_centisecs
+	setprop pm.sleep_mode 1
+	setprop ro.ril.disable.power.collapse 0
+	setprop ro.ril.fast.dormancy.rule 0
+fi	
+
+if [ $AdvancedBootSdcardReadAhead == 1 ]
+then
+	echo "applying sdcard readahead to $AdvancedBootSdcardReadAheadValue" >> $ADVBOOT_LOG
+	echo "$AdvancedBootSdcardReadAheadValue" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
+fi	
 
 if [ $AdvancedBootEnableBackup == 1 ]
 	if [ $AdvancedBootBackupUserSettings == 1 ]
@@ -313,15 +313,106 @@ if [ $AdvancedBootEnableBackup == 1 ]
 	$BUSYBOX tar -cz $AdvancedBootBackupUserSettings $AdvancedBootBackupBatteryStats $AdvancedBootBackupPhilzSettings $AdvancedBootBackupDownloadedApps $AdvancedBootBackupBluetoothSettings $AdvancedBootBackupWifiSettings -f $ADVBOOT_BACKUP
 fi
 
-if [ -e /system/AdvBoot/kernel-implemented ]
+if [ $AdvancedBootDalvikToCache == 1 ]
 then
-	rm -rf /system/AdvBoot/kernel-implemented
-else
-	if [ -e /system/AdvBoot/rom-implemented ]
+	CACHESIZE=$($BUSYBOX df -k /cache | $BUSYBOX tail -n1 | $BUSYBOX tr -s ' ' | $BUSYBOX cut -d ' ' -f2)
+	if [ $CACHESIZE -gt 100000 ]
 	then
-		rm -rf /system/AdvBoot/rom-implemented
+		echo "moving dalvik-cache to cache" >> $ADVBOOT_LOG
+		if [ -e /cache/dalvik-cache ]
+		then
+        rm -rf /cache/dalvik-cache /data/dalvik-cache
+		mkdir /cache/dalvik-cache /data/dalvik-cache
+		fi
+		chown 1000:1000 /cache/dalvik-cache
+		chmod 0771 /cache/dalvik-cache
+		$MOUNT mount -o bind /cache/dalvik-cache /data/dalvik-cache
+		chown 1000:1000 /data/dalvik-cache
+		chmod 0771 /data/dalvik-cache
+	else
+		echo "cache $CACHESIZE is too small" >> $ADVBOOT_LOG
+		echo "skipping dalvik-cache to cache" >> $ADVBOOT_LOG
 	fi
+fi	
+
+if [ $AdvancedBootDpiModding == 0 ]
+then
+	if [ -e /system/AdvBoot/orig.dpi ]
+	then
+		ORIGDPI=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
+		DPIFLAG=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
+		PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
+		chmod 644 /system/build.prop
+	fi
+else
+	chmod 644 /system/build.prop
 fi
+
+if [ $AdvancedBootDpiModding == 1 ]
+then
+	DPIFLAG=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f1)
+	PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
+	if [ -e /system/AdvBoot/orig.dpi ]
+	then
+		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
+		chmod 644 /system/build.prop
+	else
+		echo "$DPIFLAG=$PREVDPI" >> /system/AdvBoot/orig.dpi
+		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
+		chmod 644 /system/build.prop
+	fi
+	echo "applied custom dpi $AdvancedBootCustomDpi" >> $ADVBOOT_LOG
+fi
+
+if [ $AdvancedBootUseGoogleDns == 1 ]
+then
+	echo "using googles DNS server" >> $ADVBOOT_LOG
+	setprop net.dns1 8.8.8.8
+	setprop net.dns2 8.8.4.4 
+	setprop net.ppp0.dns1 8.8.8.8
+	setprop net.ppp0.dns2 8.8.4.4 
+fi	
+
+if [ $AdvancedBootEnableFastReboot == 1 ]
+then
+	echo "enabling fast reboot" >> $ADVBOOT_LOG
+	setprop persist.sys.shutdown.mode hibernate
+	setprop ro.config.hw_quickpoweron true
+fi	
+
+if [ $AdvancedBootIncreaseResponse == 1 ]
+then
+	echo "increasing device responsiveness" >> $ADVBOOT_LOG
+	setprop windowsmgr.max_events_per_sec 90
+	setprop ro.max.fling_velocity 12000
+	setprop ro.min.fling_velocity 9000
+	setprop debug.performance.tuning 1
+	setprop video.accelerate.hw 1
+fi	
+
+if [ $AdvancedBootSysPerformanceTweaks == 1 ]
+then
+	echo "increasing system performance" >> $ADVBOOT_LOG
+	echo "2048,3072,4608,6912,10368,15552" > /sys/module/lowmemorykiller/parameters/minfree
+	echo "90" > /proc/sys/vm/dirty_ratio
+	echo "70" > /proc/sys/vm/dirty_background_ratio
+	echo "0" > /proc/sys/vm/swappiness
+	echo "50" > /proc/sys/vm/vfs_cache_pressure
+	setprop persist.sys.purgeable_assets 1
+	setprop persist.sys.profiler_ms 1
+	setprop ro.minios.enable 1
+	setprop profiler.force_disable_err_rpt 1
+	setprop profiler.force_disable_ulog 1
+	setprop ro.mot.eri.losalert.delay 1000
+fi	
+
+if [ $AdvancedBootEnableDalvikBitcode == 0 ]
+then
+	echo "disablong dalvik bitcode verification" >> $ADVBOOT_LOG
+	setprop dalvik.vm.verify-bytecode false
+	setprop dalvik.vm.dexopt-flags v=n,o=v
+fi	
+
 
 echo "advanced boot finished $date" >> $ADVBOOT_LOG
 echo " " >> $ADVBOOT_LOG]
@@ -333,6 +424,16 @@ then
 		cp $ADVBOOT_LOG $ADVBOOT_WORK/advboot.log
 	else
 		cp $ADVBOOT_LOG $ADVBOOT_WORK/advboot.log
+	fi
+fi
+
+if [ -e /system/AdvBoot/kernel-implemented ]
+then
+	rm -rf /system/AdvBoot/kernel-implemented
+else
+	if [ -e /system/AdvBoot/rom-implemented ]
+	then
+		rm -rf /system/AdvBoot/rom-implemented
 	fi
 fi
 
