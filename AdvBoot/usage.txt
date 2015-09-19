@@ -141,5 +141,4 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	implement zipaligning on boot
 	make Advanced Boot Configuration app
 	make aroma flashable .zip
-	add x86 and x64 device support
 	
