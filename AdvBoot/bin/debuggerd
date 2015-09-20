@@ -1,10 +1,46 @@
 #!/system/bin/sh
 
-if [ -e /system/bin/mount ]; then
+ABI=$(getprop ro.product.cpu.abi= /system/build.prop | dd bs=1 skip=19 count=3)
+ABI2=$(getprop ro.product.cpu.abi2= /system/build.prop | dd bs=1 skip=20 count=3)
+if [ "$ABI" = "arm" ]
+then
+	ARCHITECTURE=arm
+else
+	if [ "$ABI2" = "arm" ]
+	then
+		ARCHITECTURE=arm
+	fi
+fi
+if [ "$ABI" = "x86" ]
+then
+	ARCHITECTURE=x86
+else
+	if [ "$ABI2" = "x86" ]
+	then
+		ARCHITECTURE=x86
+	fi
+fi
+if [ "$ABI" = "x64" ]
+then
+	ARCHITECTURE=x86
+else
+	if [ "$ABI2" = "x64" ]
+	then
+		ARCHITECTURE=x86
+	fi
+fi
+if [ -e /system/bin/mount ] 
+then
 	MOUNT="/system/bin/mount"
 else
-	if [ -e /system/AdvBoot/xbin/busybox ]; then
-		MOUNT="/system/AdvBoot/xbin/busybox mount"
+	if [ -e /system/xbin/busybox ]
+	then
+		MOUNT="/system/xbin/busybox mount"
+	else
+		if [ -e /system/AdvBoot/xbin/busybox-$ARCHITECTURE ]
+		then
+			MOUNT="/system/AdvBoot/xbin/busybox-$ARCHITECTURE mount"
+		fi
 	fi
 fi
 

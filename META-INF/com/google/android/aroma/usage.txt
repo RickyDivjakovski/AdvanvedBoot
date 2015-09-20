@@ -70,8 +70,6 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	enabling sdcard readahead will change the system value to the selected value.
 	2048 is a better setting then the devices default.
 	
--Zipalign on boot
-	
 
 -Auto settings backup
 	enabling this will give you the abillity to choose to backup the following
@@ -133,4 +131,5 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	
 -To Do List
 	make Advanced Boot Configuration app
+	make aroma flashable .zip
 	

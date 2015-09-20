@@ -3,8 +3,8 @@
 SYSTEM_PREFS=/system/boot.prefs
 ADVBOOT_WORK=/sdcard/AdvBoot
 USER_PREFS=$ADVBOOT_WORK/boot.prefs
-ABI=$(getprop ro.product.cpu.abi= /system/build.prop | dd bs=1 skip=19 count=3)
-ABI2=$(getprop ro.product.cpu.abi2= /system/build.prop | dd bs=1 skip=20 count=3)
+ABI=$(getprop "ro.product.cpu.abi=" /system/build.prop | dd bs=1 skip=19 count=3)
+ABI2=$(getprop "ro.product.cpu.abi2=" /system/build.prop | dd bs=1 skip=20 count=3)
 if [ "$ABI" = "arm" ]
 then
 	ARCHITECTURE=arm
@@ -61,7 +61,6 @@ fi
 if [ -e /system/AdvBoot ] 
 then
 	$MOUNT -o remount,rw /system
-	$MOUNT -o remount,rw /data
 	if [ -e /system/AdvBoot/orig.dpi ]
 	then
 		DPIFLAG=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f1)
@@ -71,9 +70,6 @@ then
 		rm -rf /system/AdvBoot/orig.dpi
 		chmod 644 /system/build.prop
 	fi
-	rm -rf /system/bin/debuggerd
-	mv "/system/bin/debuggerd.advboot" "/system/bin/debuggerd"
-	chmod 0644 /system/bin/debuggerd
 	if [ -e $SYSTEM_PREFS ] 
 	then
 	rm -rf $SYSTEM_PREFS
@@ -82,7 +78,6 @@ then
 	then
 	rm -rf $USER_PREFS
 	fi
-	rm -rf /system/AdvBoot
 fi
 
 exit

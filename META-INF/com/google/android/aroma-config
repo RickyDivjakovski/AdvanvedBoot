@@ -1,0 +1,76 @@
+ini_set("rom_name",             "Advanced Boot");                                      
+ini_set("rom_version",          "Version 1.0");                                       
+ini_set("rom_author",           "Ricky Divjakovski");                       
+ini_set("rom_date",             "20TH SEP 2015");                      
+
+anisplash(
+    3,
+
+    "splash/a1", 500,                                                      
+    "splash/a2", 30,
+    "splash/a3", 30,
+    "splash/a4", 30,
+    "splash/a5", 30,
+    "splash/a6", 30
+);
+
+theme("franzyroy");
+loadlang("langs/en.lang");
+fontresload( "0", "ttf/Roboto-Regular.ttf", "12" );
+fontresload( "1", "ttf/Roboto-Regular.ttf", "18" );
+
+
+viewbox(
+    "<~welcome.title>",
+    "You are about to install <b>"+
+	  ini_get("rom_name")+
+	"</b> <~common.for> <b>ARM, X86 and X64 devices</b>.\n\n"+
+    "<~welcome.text2>\n\n"+
+      "  <~welcome.version>\t: <b><#selectbg_g>"+ini_get("rom_version")+"</#></b>\n"+
+      "  <~welcome.updated>\t: <b><#selectbg_g>"+ini_get("rom_date")+"</#></b>\n\n\n"+
+    "<~welcome.next>",
+    "@welcome"
+);
+
+agreebox(
+    "<~terms.title>",
+    "<~terms.desc>",
+    "@license",
+    resread("license.txt"),
+    "<~terms.check>",
+    "<~terms.confirm>"
+);
+
+agreebox(
+    "<~terms.title>",
+    "<~terms.desc>",
+    "@license",
+    resread("usage.txt"),
+    "<~terms.check>",
+    "<~terms.confirm>"
+);
+
+selectbox(
+  "Advanced Boot",
+  "Install Mode",
+  "icons/app",
+  "install.prop",
+  
+  "INSTALLATION TYPE","",2, 
+  "Install","Install Advanced Boot as a user",1, 
+  "Uninstall","Uninstall Advanced Boot from system",0,
+  "Revert","Revert Advanced Boot settings back to default",0,
+  "Exit","Exit installer and dont install Advanced Boot",0 
+);  
+
+
+setvar("retstatus",
+  install(
+      "Installing",
+	  "<b>"+ini_get("rom_name")+"</b> is being implemented",
+      "@install",
+      "The installation wizard has successfully implemented <b>"+ini_get("rom_name")+
+	  "</b>. Press Next to finish."
+  )
+);
+
