@@ -25,11 +25,11 @@ else
 fi
 if [ "$ABI" = "x64" ]
 then
-	ARCHITECTURE=x86
+	ARCHITECTURE=x64
 else
 	if [ "$ABI2" = "x64" ]
 	then
-		ARCHITECTURE=x86
+		ARCHITECTURE=x64
 	fi
 fi
 if [ -e /system/bin/mount ] 
