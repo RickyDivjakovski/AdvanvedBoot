@@ -1,34 +1,13 @@
 #!/system/bin/sh
 
-ABI=$(getprop ro.product.cpu.abi= /system/build.prop | dd bs=1 skip=19 count=3)
-ABI2=$(getprop ro.product.cpu.abi2= /system/build.prop | dd bs=1 skip=20 count=3)
-if [ "$ABI" = "arm" ]
-then
-	ARCHITECTURE=arm
-else
-	if [ "$ABI2" = "arm" ]
-	then
-		ARCHITECTURE=arm
-	fi
-fi
-if [ "$ABI" = "x86" ]
-then
-	ARCHITECTURE=x86
-else
-	if [ "$ABI2" = "x86" ]
-	then
-		ARCHITECTURE=x86
-	fi
-fi
-if [ "$ABI" = "x64" ]
-then
-	ARCHITECTURE=x64
-else
-	if [ "$ABI2" = "x64" ]
-	then
-		ARCHITECTURE=x64
-	fi
-fi
+ABI=$(grep ro.product.cpu.abi= /system/build.prop | dd bs=1 skip=19 count=3)
+ABI2=$(grep ro.product.cpu.abi2= /system/build.prop  | dd bs=1 skip=20 count=3)
+if [ "$ABI" = "arm" ]; then ARCHITECTURE=arm; fi
+if [ "$ABI2" = "arm" ]; then ARCHITECTURE=arm; fi
+if [ "$ABI" = "x86" ]; then ARCHITECTURE=x86; fi
+if [ "$ABI2" = "x86" ]; then ARCHITECTURE=x86; fi
+if [ "$ABI" = "x64" ]; then ARCHITECTURE=x64; fi
+if [ "$ABI2" = "x64" ]; then ARCHITECTURE=x64; fi
 if [ -e /system/bin/mount ] 
 then
 	MOUNT="/system/bin/mount"
@@ -39,27 +18,24 @@ else
 	else
 		if [ -e /system/AdvBoot/xbin/busybox-$ARCHITECTURE ]
 		then
-			MOUNT="/system/AdvBoot/xbin/busybox-$ARCHITECTURE mount"
+			MOUNT=/system/AdvBoot/xbin/busybox-$ARCHITECTURE mount
 		fi
 	fi
 fi
 
-if [ -e /system/AdvBoot ] 
+
+$MOUNT -o remount,rw /system
+if [ -e /system/bin/debuggerd2 ] 
 then
-	$MOUNT -o remount,rw /system
-	if [ -e /system/bin/debuggerd.advboot ] 
+	if [ -e /system/bin/debuggerd ]
 	then
-		if [ -e /system/bin/debuggerd ]
-		then
-			rm -rf /system/bin/debuggerd
-		fi
-		cp /system/AdvBoot/bin/debuggerd /system/bin/debuggerd.advboot
-		chmod 0644 /system/bin/debuggerd
-	else
-		mv "/system/bin/debuggerd" "/system/bin/debuggerd.advboot"
-		cp /system/AdvBoot/bin/debuggerd /system/bin/debuggerd
-		chmod 0644 /system/bin/debuggerd
+		rm -rf /system/bin/debuggerd
 	fi
+	cp -f /system/AdvBoot/bin/debuggerd /system/bin/debuggerd
+else
+	cp -f /system/bin/debuggerd /system/bin/debuggerd2
+	cp -f /system/AdvBoot/bin/debuggerd /system/bin/debuggerd
 fi
+chmod 0775 /system/bin/debuggerd
 
 exit

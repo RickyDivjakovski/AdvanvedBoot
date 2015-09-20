@@ -2,40 +2,19 @@
 
 DEFAULT_PREFS=/system/AdvBoot/prefs/boot.prefs
 SYSTEM_PREFS=/system/boot.prefs
-ADVBOOT_WORK=/sdcard/AdvBoot
-USER_PREFS=/sdcard/boot.prefs
-ADVBOOT_BACKUP=$ADVBOOT_WORK/backups/backup.tar
+ADVBOOT_WORK=/sdcard/AdvancedBoot
+USER_PREFS=$ADVBOOT_WORK/boot.prefs
+ADVBOOT_BACKUP=$ADVBOOT_WORK/backup.tar
 ADVBOOT_LOG=/data/advboot.log
 DATE=$(date)
-ABI=$(getprop ro.product.cpu.abi= /system/build.prop | dd bs=1 skip=19 count=3)
-ABI2=$(getprop ro.product.cpu.abi2= /system/build.prop | dd bs=1 skip=20 count=3)
-if [ "$ABI" = "arm" ]
-then
-	ARCHITECTURE=arm
-else
-	if [ "$ABI2" = "arm" ]
-	then
-		ARCHITECTURE=arm
-	fi
-fi
-if [ "$ABI" = "x86" ]
-then
-	ARCHITECTURE=x86
-else
-	if [ "$ABI2" = "x86" ]
-	then
-		ARCHITECTURE=x86
-	fi
-fi
-if [ "$ABI" = "x64" ]
-then
-	ARCHITECTURE=x64
-else
-	if [ "$ABI2" = "x64" ]
-	then
-		ARCHITECTURE=x64
-	fi
-fi
+ABI=$(grep ro.product.cpu.abi= /system/build.prop | dd bs=1 skip=19 count=3)
+ABI2=$(grep ro.product.cpu.abi2= /system/build.prop  | dd bs=1 skip=20 count=3)
+if [ "$ABI" = "arm" ]; then ARCHITECTURE=arm; fi
+if [ "$ABI2" = "arm" ]; then ARCHITECTURE=arm; fi
+if [ "$ABI" = "x86" ]; then ARCHITECTURE=x86; fi
+if [ "$ABI2" = "x86" ]; then ARCHITECTURE=x86; fi
+if [ "$ABI" = "x64" ]; then ARCHITECTURE=x64; fi
+if [ "$ABI2" = "x64" ]; then ARCHITECTURE=x64; fi
 if [ -e /system/bin/mount ] 
 then
 	MOUNT="/system/bin/mount"
@@ -46,7 +25,7 @@ else
 	else
 		if [ -e /system/AdvBoot/xbin/busybox-$ARCHITECTURE ]
 		then
-			MOUNT="/system/AdvBoot/xbin/busybox-$ARCHITECTURE mount"
+			MOUNT=/system/AdvBoot/xbin/busybox-$ARCHITECTURE mount
 		fi
 	fi
 fi
@@ -62,16 +41,12 @@ else
 	fi
 fi
 
-if [ ! -e $ADVBOOT_WORK ]
-then
-	mkdir -p $ADVBOOT_WORK
-	chmod 777 $ADVBOOT_WORK
-	chown root root
-fi
 $MOUNT -o remount,rw /system
 $MOUNT -o remount,rw /data
 chmod 0775 $BUSYBOX
 
+mkdir -p $ADVBOOT_WORK
+chmod 777 $ADVBOOT_WORK
 
 chmod 777 $DEFAULT_PREFS
 sh "$DEFAULT_PREFS"
@@ -87,7 +62,7 @@ else
 	sh "$SYSTEM_PREFS"
 	BOOTPREFS=$SYSTEM_PREFS
 fi
-AdvancedBootUserConfigurable=$($BUSYBOX grep AdvancedBootUserConfigurable= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootUserConfigurable=$(grep AdvancedBootUserConfigurable= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 if [ $AdvancedBootUserConfigurable == 1 ]
 then
 	if [ -e "$USER_PREFS" ]
@@ -109,17 +84,17 @@ then
 	fi
 fi
 
-AdvancedBootEnabled=$($BUSYBOX grep AdvancedBootEnabled= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnabled=$(grep AdvancedBootEnabled= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 if [ $AdvancedBootEnabled == 1 ]
 then
-	echo "running advanced boot" >> $ADVBOOT_LOG
+	echo "running advanced boot"
 else
 	echo "advanced boot disabled" >> $ADVBOOT_LOG
 	echo "exiting advanced boot" >> $ADVBOOT_LOG
 	exit
 fi
 
-AdvancedBootEnableAutoRestore=$($BUSYBOX grep AdvancedBootEnableAutoRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableAutoRestore=$(grep AdvancedBootEnableAutoRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 if [ $AdvancedBootEnableAutoRestore == 1 ]
 then
 	if [ ! -e $ADVBOOT_LOG ]
@@ -132,7 +107,7 @@ then
 		fi
 	fi
 fi
-AdvancedBootEnableManualRestore=$($BUSYBOX grep AdvancedBootEnableManualRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableManualRestore=$(grep AdvancedBootEnableManualRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 if [ $AdvancedBootEnableManualRestore == 1 ]
 then
 	if [ -e $ADVBOOT_BACKUP ]
@@ -150,40 +125,40 @@ echo "starting advanced boot log at $DATE $TIME" >> $ADVBOOT_LOG
 echo "system and data remounted as rw" >> $ADVBOOT_LOG
 echo "applied $BOOTPREFS preferences" >> $ADVBOOT_LOG
 
-AdvancedBootInitd=$($BUSYBOX grep AdvancedBootInitd= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootInitdPath=$($BUSYBOX grep AdvancedBootInitdPath= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootExternalInitd=$($BUSYBOX grep AdvancedBootExternalInitd= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootExternalInitdPath=$($BUSYBOX grep AdvancedBootExternalInitdPath= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableBootAnimation=$($BUSYBOX grep AdvancedBootEnableBootAnimation= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableBootSounds=$($BUSYBOX grep AdvancedBootEnableBootSounds= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootNoCallDelay=$($BUSYBOX grep AdvancedBootNoCallDelay= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootImproveMediaQuallity=$($BUSYBOX grep AdvancedBootImproveMediaQuallity= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableWmaPlayback=$($BUSYBOX grep AdvancedBootEnableWmaPlayback= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableWmvPlayback=$($BUSYBOX grep AdvancedBootEnableWmvPlayback= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableFasterStreaming=$($BUSYBOX grep AdvancedBootEnableFasterStreaming= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableAdbNotification=$($BUSYBOX grep AdvancedBootEnableAdbNotification= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootBatteryTweaks=$($BUSYBOX grep AdvancedBootBatteryTweaks= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootSdcardReadAhead=$($BUSYBOX grep AdvancedBootSdcardReadAhead= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootSdcardReadAheadValue=$($BUSYBOX grep AdvancedBootSdcardReadAheadValue= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableBackup=$($BUSYBOX grep AdvancedBootEnableBackup= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootBackupUserSettings=$($BUSYBOX grep AdvancedBootBackupUserSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootBackupBatteryStats=$($BUSYBOX grep AdvancedBootBackupBatteryStats= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootBackupPhilzSettings=$($BUSYBOX grep AdvancedBootBackupPhilzSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootBackupDownloadedApps=$($BUSYBOX grep AdvancedBootBackupDownloadedApps= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootBackupBluetoothSettings=$($BUSYBOX grep AdvancedBootBackupBluetoothSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootBackupWifiSettings=$($BUSYBOX grep AdvancedBootBackupWifiSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableManualRestore=$($BUSYBOX grep AdvancedBootEnableManualRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableAutoRestore=$($BUSYBOX grep AdvancedBootEnableAutoRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootDalvikToCache=$($BUSYBOX grep AdvancedBootDalvikToCache= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootDpiModding=$($BUSYBOX grep AdvancedBootDpiModding= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootCustomDpi=$($BUSYBOX grep AdvancedBootCustomDpi= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootUseGoogleDns=$($BUSYBOX grep AdvancedBootUseGoogleDns= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableFastReboot=$($BUSYBOX grep AdvancedBootEnableFastReboot= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootIncreaseResponse=$($BUSYBOX grep AdvancedBootIncreaseResponse= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootSysPerformanceTweaks=$($BUSYBOX grep AdvancedBootSysPerformanceTweaks= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableDalvikBitcode=$($BUSYBOX grep AdvancedBootEnableDalvikBitcode= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableSystemAutomount=$($BUSYBOX grep AdvancedBootEnableSystemAutomount= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
-AdvancedBootEnableDataAutomount=$($BUSYBOX grep AdvancedBootEnableDataAutomount= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootInitd=$(grep AdvancedBootInitd= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootInitdPath=$(grep AdvancedBootInitdPath= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootExternalInitd=$(grep AdvancedBootExternalInitd= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootExternalInitdPath=$(grep AdvancedBootExternalInitdPath= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableBootAnimation=$(grep AdvancedBootEnableBootAnimation= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableBootSounds=$(grep AdvancedBootEnableBootSounds= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootNoCallDelay=$(grep AdvancedBootNoCallDelay= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootImproveMediaQuallity=$(grep AdvancedBootImproveMediaQuallity= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableWmaPlayback=$(grep AdvancedBootEnableWmaPlayback= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableWmvPlayback=$(grep AdvancedBootEnableWmvPlayback= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableFasterStreaming=$(grep AdvancedBootEnableFasterStreaming= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableAdbNotification=$(grep AdvancedBootEnableAdbNotification= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBatteryTweaks=$(grep AdvancedBootBatteryTweaks= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootSdcardReadAhead=$(grep AdvancedBootSdcardReadAhead= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootSdcardReadAheadValue=$(grep AdvancedBootSdcardReadAheadValue= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableBackup=$(grep AdvancedBootEnableBackup= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBackupUserSettings=$(grep AdvancedBootBackupUserSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBackupBatteryStats=$(grep AdvancedBootBackupBatteryStats= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBackupPhilzSettings=$(grep AdvancedBootBackupPhilzSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBackupDownloadedApps=$(grep AdvancedBootBackupDownloadedApps= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBackupBluetoothSettings=$(grep AdvancedBootBackupBluetoothSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBackupWifiSettings=$(grep AdvancedBootBackupWifiSettings= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableManualRestore=$(grep AdvancedBootEnableManualRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableAutoRestore=$(grep AdvancedBootEnableAutoRestore= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootDalvikToCache=$(grep AdvancedBootDalvikToCache= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootDpiModding=$(grep AdvancedBootDpiModding= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootCustomDpi=$(grep AdvancedBootCustomDpi= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootUseGoogleDns=$(grep AdvancedBootUseGoogleDns= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableFastReboot=$(grep AdvancedBootEnableFastReboot= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootIncreaseResponse=$(grep AdvancedBootIncreaseResponse= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootSysPerformanceTweaks=$(grep AdvancedBootSysPerformanceTweaks= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableDalvikBitcode=$(grep AdvancedBootEnableDalvikBitcode= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableSystemAutomount=$(grep AdvancedBootEnableSystemAutomount= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootEnableDataAutomount=$(grep AdvancedBootEnableDataAutomount= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 
 if [ $AdvancedBootInitd == 1 ]
 then
@@ -224,7 +199,7 @@ then
 	fi
 fi	
 
-if [ $AdvancedBootEnableBootAnimation == 1 ]
+if [ $AdvancedBootEnableBootAnimation == 0 ]
 then
 	echo "disabling boot animation" >> $ADVBOOT_LOG
 	setprop debug.sf.nobootanimation 1
@@ -298,7 +273,7 @@ fi
 if [ $AdvancedBootEnableAdbNotification == 0 ]
 then
 	echo "disabling system ADB notification" >> $ADVBOOT_LOG
-	setprop persist.adb.notify 0
+	setprop "persist.adb.notify" 0
 fi	
 
 if [ $AdvancedBootBatteryTweaks == 1 ]
@@ -314,10 +289,11 @@ fi
 if [ $AdvancedBootSdcardReadAhead == 1 ]
 then
 	echo "applying sdcard readahead to $AdvancedBootSdcardReadAheadValue" >> $ADVBOOT_LOG
-	echo "$AdvancedBootSdcardReadAheadValue" > /sys/devices/virtual/bdi/179:0/read_ahead_kb
+	echo "$AdvancedBootSdcardReadAheadValue" > "/sys/devices/virtual/bdi/179:0/read_ahead_kb"
 fi	
 
 if [ $AdvancedBootEnableBackup == 1 ]
+then
 	if [ $AdvancedBootBackupUserSettings == 1 ]
 	then
 		echo "backing up users" >> $ADVBOOT_LOG
@@ -378,7 +354,7 @@ if [ $AdvancedBootEnableBackup == 1 ]
 		then
 			if [ $AdvancedBootBackupBluetoothSettings == /data/misc/bluedroid ]
 			then
-				AdvancedBootBackupBluetoothSettings=/data/misc/bluedroid /data/misc/bluetooth
+				AdvancedBootBackupBluetoothSettings="/data/misc/bluedroid /data/misc/bluetooth"
 			else
 				AdvancedBootBackupBluetoothSettings=/data/misc/bluetooth
 			fi
@@ -389,20 +365,16 @@ if [ $AdvancedBootEnableBackup == 1 ]
 	if [ $AdvancedBootBackupWifiSettings == 1 ]
 	then
 		echo "backing up wifi settings" >> $ADVBOOT_LOG
-		if [ -e /data/misc/wifi ]
+		if [ -e "/data/misc/wifi" ]
 		then
-			AdvancedBootBackupWifiSettings=/data/misc/wifi/*.conf
+			AdvancedBootBackupWifiSettings=$(ls /data/misc/wifi/*.conf)
 		fi
 	else
 		AdvancedBootBackupWifiSettings=" "
 	fi	
-	if [ ! -e /sdcard/AdvBootBackups ]
+	if [ -e $ADVBOOT_BACKUP ]
 	then
-		mkdir /sdcard/AdvBootBackups
-	fi
-	if [ -e /sdcard/AdvBootBackups/backup.tar ]
-	then
-		rm -rf /sdcard/AdvBootBackups/backup.tar
+		rm -rf $ADVBOOT_BACKUP
 	fi
 	$BUSYBOX tar -cz $AdvancedBootBackupUserSettings $AdvancedBootBackupBatteryStats $AdvancedBootBackupPhilzSettings $AdvancedBootBackupDownloadedApps $AdvancedBootBackupBluetoothSettings $AdvancedBootBackupWifiSettings -f $ADVBOOT_BACKUP
 fi
@@ -420,7 +392,7 @@ then
 		fi
 		chown 1000:1000 /cache/dalvik-cache
 		chmod 0771 /cache/dalvik-cache
-		$MOUNT mount -o bind /cache/dalvik-cache /data/dalvik-cache
+		$MOUNT -o bind /cache/dalvik-cache /data/dalvik-cache
 		chown 1000:1000 /data/dalvik-cache
 		chmod 0771 /data/dalvik-cache
 	else
@@ -433,9 +405,9 @@ if [ $AdvancedBootDpiModding == 0 ]
 then
 	if [ -e /system/AdvBoot/orig.dpi ]
 	then
-		DPIFLAG=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f1)
-		ORIGDPI=$($BUSYBOX grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
-		PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop)
+		DPIFLAG=$(grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f1)
+		ORIGDPI=$(grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
+		PREVDPI=$(grep lcd_density= /system/build.prop)
 		$BUSYBOX sed -i s/$PREVDPI/$DPIFLAG=$ORIGDPI/g /system/build.prop
 		rm -rf /system/AdvBoot/orig.dpi
 		chmod 644 /system/build.prop
@@ -446,8 +418,8 @@ fi
 
 if [ $AdvancedBootDpiModding == 1 ]
 then
-	DPIFLAG=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f1)
-	PREVDPI=$($BUSYBOX grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
+	DPIFLAG=$(grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f1)
+	PREVDPI=$(grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
 	if [ -e /system/AdvBoot/orig.dpi ]
 	then
 		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
@@ -511,7 +483,7 @@ fi
 
 
 echo "advanced boot finished $date" >> $ADVBOOT_LOG
-echo " " >> $ADVBOOT_LOG]
+echo  >> $ADVBOOT_LOG
 if [ -e $ADVBOOT_LOG ]
 then
 	if [ -e $ADVBOOT_WORK/advboot.log ]

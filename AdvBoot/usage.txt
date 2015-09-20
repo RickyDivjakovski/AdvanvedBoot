@@ -8,9 +8,9 @@ Setting Advanced Boot preferences
 	adv.boot.user.configurable enabled will allow users to edit preferences from /sdcard/AdvBoot/boot.prefs.
 	if not preferences from /system/boot.prefs will not be applied.
 	if no preferences file there the tool will copy default preferences to /system/
-	if no preferences file in /sdcard the /system copy will be copied to /sdcard if user configuration is enabled
+	if no preferences file in /sdcard/AdvanvedBoot the /system copy will be copied to /sdcard/Advanvedboot if user configuration is enabled
 	developers - edit the /system/boot.prefs file
-	users - edit the /sdcard/boot.prefs file
+	users - edit the /sdcard/AdvancedBoot/boot.prefs file
 	AdvBoot/boot.prefs will be loaded by default.
 	if found /system/boot.prefs those settings will over-ride default settings.
 	if found /sdcard/boot.prefs and adv.boot.user.configurable enabled those settings will over-ride default and system settings.

@@ -36,15 +36,6 @@ agreebox(
     "<~terms.title>",
     "<~terms.desc>",
     "@license",
-    resread("license.txt"),
-    "<~terms.check>",
-    "<~terms.confirm>"
-);
-
-agreebox(
-    "<~terms.title>",
-    "<~terms.desc>",
-    "@license",
     resread("usage.txt"),
     "<~terms.check>",
     "<~terms.confirm>"
@@ -58,8 +49,8 @@ selectbox(
   
   "INSTALLATION TYPE","",2, 
   "Install","Install Advanced Boot as a user",1, 
-  "Uninstall","Uninstall Advanced Boot from system",0,
   "Revert","Revert Advanced Boot settings back to default",0,
+  "Uninstall","Uninstall Advanced Boot from system",0,
   "Exit","Exit installer and dont install Advanced Boot",0 
 );  
 

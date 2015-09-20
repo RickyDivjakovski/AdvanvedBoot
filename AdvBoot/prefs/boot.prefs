@@ -46,9 +46,6 @@
 	AdvancedBootSdcardReadAhead=1
 	AdvancedBootSdcardReadAheadValue=2048
 
-# enable/disable zipalign on boot
-#	AdvancedBootZipalignOnBoot=0
-
 # auto backup rom settings
 	AdvancedBootEnableBackup=0
 # only backs up following if AdvancedBootEnableBackup is set 1
