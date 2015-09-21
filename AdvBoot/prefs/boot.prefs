@@ -23,6 +23,9 @@
 	AdvancedBootEnableBootAnimation=1
 	AdvancedBootEnableBootSounds=1
 
+# enable/disable volume button waking device
+	AdvancedBootVolume2Wake=1
+
 # enable/disable no call delay
 	AdvancedBootNoCallDelay=1
 	
@@ -97,13 +100,13 @@
 SCHEDULERSHERE
 # change to a selected scheduler
 	AdvancedBootSchedulerModding=0
-	AdvancedBootCustomScheduler=0
+	AdvancedBootCustomScheduler=sio
 	
 # Available governors for your device[default is in brackets]
 GOVERNORSHERE
 # change to a selected governor
 	AdvancedBootGovernorModding=0
-	AdvancedBootCustomGovernor=0
+	AdvancedBootCustomGovernor=conservative
 	
 # enable/disable device logging
 	AdvancedBootLogging=1

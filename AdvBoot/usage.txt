@@ -40,6 +40,11 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	
 -Bootanimation and bootsounds
 	simple, you can enable or disable boot animation and sounds.
+
+	
+-Enable/diable Volume2Wake device feature
+	stop the device from waking when hitting the volume rocker by disabling
+	this
 	
 	
 -No call delay

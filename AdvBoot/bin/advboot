@@ -127,6 +127,7 @@ AdvancedBootExternalInitd=$(grep AdvancedBootExternalInitd= $BOOTPREFS | $BUSYBO
 AdvancedBootExternalInitdPath=$(grep AdvancedBootExternalInitdPath= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableBootAnimation=$(grep AdvancedBootEnableBootAnimation= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableBootSounds=$(grep AdvancedBootEnableBootSounds= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootVolume2Wake=$(grep AdvancedBootVolume2Wake= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootNoCallDelay=$(grep AdvancedBootNoCallDelay= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootImproveMediaQuallity=$(grep AdvancedBootImproveMediaQuallity= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableWmaPlayback=$(grep AdvancedBootEnableWmaPlayback= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
@@ -174,6 +175,8 @@ if [ $AdvancedBootGovernorsHere == "GOVERNORSHERE" ]
 then
 	$BUSYBOX sed -i s/$AdvancedBootGovernorsHere/$AdvancedBootAvailableGovernors/g $BOOTPREFS
 fi	
+
+
 
 if [ $AdvancedBootInitd == 1 ]
 then
@@ -241,6 +244,12 @@ then
 	then
 		mv "/system/media/audio/ui/PowerOff.ogg" "/system/media/audio/ui/PowerOff.ogg.adv"
 	fi
+fi	
+
+if [ $AdvancedBootVolume2Wake == 0 ]
+then
+	echo "disabling volume2wake device feature" >> $ADVBOOT_LOG
+	setprop ro.config.hwfeature_wakeupkey 0
 fi	
 
 if [ $AdvancedBootNoCallDelay == 1 ]
@@ -515,7 +524,7 @@ fi
 
 if [ $AdvancedBootLogging == 0 ]
 then
-	echo "disabling logging" >> $ADVBOOT_LOG
+	echo "disabling device logging" >> $ADVBOOT_LOG
 	rm -rf /dev/log/main
 fi	
 
