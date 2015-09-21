@@ -92,6 +92,18 @@
 
 # enable/disable dalvik bitcode verification
 	AdvancedBootEnableDalvikBitcode=1
+	
+# Available schedulers for your device are
+SCHEDULERSHERE
+# change to a selected scheduler
+	AdvancedBootSchedulerModding=0
+	AdvancedBootCustomScheduler=0
+	
+# Available governors for your device[default is in brackets]
+GOVERNORSHERE
+# change to a selected governor
+	AdvancedBootGovernorModding=0
+	AdvancedBootCustomGovernor=0
 
 # enable/disable automount /system or /data as rw on boot
 	AdvancedBootEnableSystemAutomount=0

@@ -54,12 +54,10 @@ BOOTPREFS=$DEFAULT_PREFS
 if [ -e "$SYSTEM_PREFS" ] 
 then
 	chmod 777 $SYSTEM_PREFS
-	sh "$SYSTEM_PREFS"
 	BOOTPREFS=$SYSTEM_PREFS
 else
 	cp -f $DEFAULT_PREFS $SYSTEM_PREFS
 	chmod 777 $SYSTEM_PREFS
-	sh "$SYSTEM_PREFS"
 	BOOTPREFS=$SYSTEM_PREFS
 fi
 AdvancedBootUserConfigurable=$(grep AdvancedBootUserConfigurable= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
@@ -68,7 +66,6 @@ then
 	if [ -e "$USER_PREFS" ]
 	then
 		chmod 777 $USER_PREFS
-		sh "$USER_PREFS"
 		BOOTPREFS=$USER_PREFS
 	else
 		if [ -e "$SYSTEM_PREFS" ] 
@@ -79,7 +76,6 @@ then
 			cp -f "$DEFAULT_PREFS" "$USER_PREFS"
 			chmod 777 $USER_PREFS
 		fi
-		sh "$USER_PREFS"
 		BOOTPREFS=$USER_PREFS
 	fi
 fi
@@ -157,8 +153,26 @@ AdvancedBootEnableFastReboot=$(grep AdvancedBootEnableFastReboot= $BOOTPREFS | $
 AdvancedBootIncreaseResponse=$(grep AdvancedBootIncreaseResponse= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootSysPerformanceTweaks=$(grep AdvancedBootSysPerformanceTweaks= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableDalvikBitcode=$(grep AdvancedBootEnableDalvikBitcode= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootSchedulersHere=$(grep SCHEDULERSHERE $BOOTPREFS)
+AdvancedBootAvailableSchedulers=$(cat /sys/block/mmcblk0/queue/scheduler)
+AdvancedBootSchedulerModding=$(grep AdvancedBootSchedulerModding= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootCustomScheduler=$(grep AdvancedBootCustomScheduler= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootGovernorsHere=$(grep GOVERNORSHERE $BOOTPREFS)
+AdvancedBootAvailableGovernors=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors)
+AdvancedBootGovernorModding=$(grep AdvancedBootGovernorModding= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootCustomGovernor=$(grep AdvancedBootCustomGovernor= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableSystemAutomount=$(grep AdvancedBootEnableSystemAutomount= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableDataAutomount=$(grep AdvancedBootEnableDataAutomount= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+
+if [ $AdvancedBootSchedulersHere == "SCHEDULERSHERE" ]
+then
+	$BUSYBOX sed -i s/$AdvancedBootSchedulersHere/$AdvancedBootAvailableSchedulers/g $BOOTPREFS
+fi	
+
+if [ $AdvancedBootGovernorsHere == "GOVERNORSHERE" ]
+then
+	$BUSYBOX sed -i s/$AdvancedBootGovernorsHere/$AdvancedBootAvailableGovernors/g $BOOTPREFS
+fi	
 
 if [ $AdvancedBootInitd == 1 ]
 then
@@ -281,6 +295,7 @@ then
 	echo "applying battery tweaks" >> $ADVBOOT_LOG
 	echo "400" > /proc/sys/vm/dirty_expire_centisecs
 	echo "1000" > /proc/sys/vm/dirty_writeback_centisecs
+	setprop wifi.supplicant_scan_interval 180
 	setprop pm.sleep_mode 1
 	setprop ro.ril.disable.power.collapse 0
 	setprop ro.ril.fast.dormancy.rule 0
@@ -476,11 +491,26 @@ fi
 
 if [ $AdvancedBootEnableDalvikBitcode == 0 ]
 then
-	echo "disablong dalvik bitcode verification" >> $ADVBOOT_LOG
+	echo "disabling dalvik bitcode verification" >> $ADVBOOT_LOG
 	setprop dalvik.vm.verify-bytecode false
 	setprop dalvik.vm.dexopt-flags v=n,o=v
 fi	
 
+if [ $AdvancedBootSchedulerModding == 1 ]
+then
+	echo Changing scheduler to $AdvancedBootCustomScheduler >> $ADVBOOT_LOG
+	echo $AdvancedBootCustomScheduler > /sys/block/mmcblk0/queue/scheduler
+	echo $AdvancedBootCustomScheduler > /sys/block/mmcblk1/queue/scheduler
+fi	
+
+if [ $AdvancedBootGovernorModding == 1 ]
+then
+	echo Changing governor to $AdvancedBootCustomGovernor >> $ADVBOOT_LOG
+	echo $AdvancedBootCustomGovernor > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	echo $AdvancedBootCustomGovernor > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+	echo $AdvancedBootCustomGovernor > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	echo $AdvancedBootCustomGovernor > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+fi	
 
 echo "advanced boot finished $date" >> $ADVBOOT_LOG
 echo  >> $ADVBOOT_LOG

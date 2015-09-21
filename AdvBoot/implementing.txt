@@ -6,13 +6,13 @@ To implement this as a user follow the following steps
 
 -Rom implementation
 To implement in rom follow the following steps
-1. Include AdvBoot in the /system/ directory of your rom
-2. Rename /system/bin/debuggerd to debuggerd.advboot
-3. Copy /system/AdvBoot/core/debuggerd into the /system/bin/ directory
+1. Include AdvBoot folder in the /system/ directory of your rom
+2. Rename /system/bin/debuggerd to debuggerd2
+3. Copy /system/AdvBoot/bin/debuggerd into the /system/bin/ directory
 
 -Kernel implementation
 To implement in kernel follow the following steps
-1. Include AdvBoot in the /system/ directory of your rom
+1. Include AdvBoot folder in the /system/ directory of your rom
 2. Add the following lines to init.rc
 
 -----------------< COPY LINES BELOW THIS >-----------------

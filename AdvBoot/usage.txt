@@ -117,14 +117,24 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 -System performance tweaks
 	enabling this will increase your device performance slightly or dramatically
 	recommended to use this only if you have a backup before you apply it
-	
-	
+
+
 -Dalvik bitcode verification
 	disabling this increases your device speed and power the most
 	although some apps are said to crash randomly and its known to cause some small bugs
 	i recommend a backup before applying this
 
+
+-Scheduler modding
+	enabling this allows you to change your scheduler from within the tool, this tool also gives you a
+	list of all supported schedulers supported by the kernel
 	
+
+-Governor modding
+	enabling this allows you to change your governor from within the tool, this tool also gives you a
+	list of all supported governors supported by the kernel
+
+
 -Automount /system or /data
 	enabling will allow the enabled partitions to be mounted as readable and writable on boot.	
 
