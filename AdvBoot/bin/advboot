@@ -135,6 +135,7 @@ AdvancedBootEnableWmvPlayback=$(grep AdvancedBootEnableWmvPlayback= $BOOTPREFS |
 AdvancedBootEnableFasterStreaming=$(grep AdvancedBootEnableFasterStreaming= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableAdbNotification=$(grep AdvancedBootEnableAdbNotification= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootBatteryTweaks=$(grep AdvancedBootBatteryTweaks= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootLockLauncher=$(grep AdvancedBootLockLauncher= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootSdcardReadAhead=$(grep AdvancedBootSdcardReadAhead= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootSdcardReadAheadValue=$(grep AdvancedBootSdcardReadAheadValue= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableBackup=$(grep AdvancedBootEnableBackup= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
@@ -309,6 +310,12 @@ then
 	setprop pm.sleep_mode 1
 	setprop ro.ril.disable.power.collapse 0
 	setprop ro.ril.fast.dormancy.rule 0
+fi	
+
+if [ $AdvancedBootLockLauncher == 1 ]
+then
+	echo "locking launcher into memory" >> $ADVBOOT_LOG
+	setprop ro.HOME_APP_ADJ 1
 fi	
 
 if [ $AdvancedBootSdcardReadAhead == 1 ]

@@ -45,6 +45,9 @@
 # enable/disable battery tweaks
 	AdvancedBootBatteryTweaks=1
 	
+# lock launcher into memory
+	AdvancedBootLockLauncher=0
+	
 # enable sdcard readahead
 	AdvancedBootSdcardReadAhead=1
 	AdvancedBootSdcardReadAheadValue=2048

@@ -44,7 +44,7 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	
 -Enable/diable Volume2Wake device feature
 	stop the device from waking when hitting the volume rocker by disabling
-	this
+	this.
 	
 	
 -No call delay
@@ -52,23 +52,27 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	
 	
 -Improving image, audio and video quallity
-	if you enable this it increases media quallity slightly
+	if you enable this it increases media quallity slightly.
 	
 	
 -WMA and WMV playback
-	if you enable these you allow the device to decode WMA audio and WMV video files
+	if you enable these you allow the device to decode WMA audio and WMV video files.
 	
 	
 -Faster streaming
-	enabling this will increase the speed of streaming
+	enabling this will increase the speed of streaming.
 	
 	
 -System ADB notification
-	toggling this will allow you to show or remove the system ADB notification
+	toggling this will allow you to show or remove the system ADB notification.
 
 
 -Battery tweaks
 	enabling this will increase battery by doubling the default dirty_writeback_centisecs dirty_expire_centisecs values.
+	
+	
+-Lock launcher into memory
+	this option allows you to lock the launcher into memory, slightly higher ram usage but launcher has less lag.
 
 	
 -Sdcard readahead
@@ -77,23 +81,23 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	
 
 -Auto settings backup
-	enabling this will give you the abillity to choose to backup the following
-	user settings - your system user settings(wallpaper, lockscreen wallpaper, homescreen layout)
-	battery stats - your battery stats file(for advanced users)
-	philz recovery settings - your philz touch recovery settings
-	downloaded apps - your 3rd party installed apps(from google play/system app updates)
-	bluetooth settings - your bluetooth paired device settings
-	wifi settings - your connected wifi settings and mobileAP settings
+	enabling this will give you the abillity to choose to backup the following.
+	user settings - your system user settings(wallpaper, lockscreen wallpaper, homescreen layout).
+	battery stats - your battery stats file(for advanced users).
+	philz recovery settings - your philz touch recovery settings.
+	downloaded apps - your 3rd party installed apps(from google play/system app updates).
+	bluetooth settings - your bluetooth paired device settings.
+	wifi settings - your connected wifi settings and mobileAP settings.
 	
 	
 -Manual restore settings
-	enabling this will restore your previous backup with the tool on next boot
-	after the reboot it will then toggle then disable this to avoid cntinuosly restoring every boot
+	enabling this will restore your previous backup with the tool on next boot.
+	after the reboot it will then toggle then disable this to avoid cntinuosly restoring every boot.
 
 
 -Auto restore settings
-	if the tool detectes no /data/advboot.log then it will automatically restore the backed up settings
-	if enabled and a backup is present as the tool will know the /data partition has been wiped
+	if the tool detectes no /data/advboot.log then it will automatically restore the backed up settings.
+	if enabled and a backup is present as the tool will know the /data partition has been wiped.
 		
 
 -Dalvik2Cache
@@ -107,44 +111,44 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 		
 	
 -Use googles DNS server
-	enabling this will make the device use googles DNS server by default
+	enabling this will make the device use googles DNS server by default.
 	
 	
 -Fast reboot
 	enabling this will make your device "hibernate" instead of completely powering off
-	therfore booting quicker
+	therfore booting quicker.
 
 	
 -Increase device response
-	enabling this will increase the all-round response of your device
+	enabling this will increase the all-round response of your device.
 	
 	
 -System performance tweaks
-	enabling this will increase your device performance slightly or dramatically
-	recommended to use this only if you have a backup before you apply it
+	enabling this will increase your device performance slightly or dramatically.
+	recommended to use this only if you have a backup before you apply it.
 
 
 -Dalvik bitcode verification
-	disabling this increases your device speed and power the most
-	although some apps are said to crash randomly and its known to cause some small bugs
-	i recommend a backup before applying this
+	disabling this increases your device speed and power the most.
+	although some apps are said to crash randomly and its known to cause some small bugs.
+	i recommend a backup before applying this.
 
 
 -Scheduler modding
 	enabling this allows you to change your scheduler from within the tool, this tool also gives you a
-	list of all supported schedulers supported by the kernel
+	list of all supported schedulers supported by the kernel.
 	
 
 -Governor modding
 	enabling this allows you to change your governor from within the tool, this tool also gives you a
-	list of all supported governors supported by the kernel
+	list of all supported governors supported by the kernel.
 	
 -Toggle device logging
-	with this option you can enable/disable device logging in /dev/log/
+	with this option you can enable/disable device logging in /dev/log/ .
 
 
 -Automount /system or /data
-	enabling will allow the enabled partitions to be mounted as readable and writable on boot.	
+	enabling will allow the enabled partitions to be mounted as readable and writable on boot.
 
 	
 -To Do List
