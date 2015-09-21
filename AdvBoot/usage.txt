@@ -133,6 +133,9 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 -Governor modding
 	enabling this allows you to change your governor from within the tool, this tool also gives you a
 	list of all supported governors supported by the kernel
+	
+-Toggle device logging
+	with this option you can enable/disable device logging in /dev/log/
 
 
 -Automount /system or /data

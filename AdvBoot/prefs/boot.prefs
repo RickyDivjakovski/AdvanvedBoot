@@ -104,6 +104,9 @@ GOVERNORSHERE
 # change to a selected governor
 	AdvancedBootGovernorModding=0
 	AdvancedBootCustomGovernor=0
+	
+# enable/disable device logging
+	AdvancedBootLogging=1
 
 # enable/disable automount /system or /data as rw on boot
 	AdvancedBootEnableSystemAutomount=0
