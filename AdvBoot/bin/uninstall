@@ -41,13 +41,13 @@ if [ -e /system/AdvBoot ]
 then
 	$MOUNT -o remount,rw /system
 	$MOUNT -o remount,rw /data
-	if [ -e /system/AdvBoot/orig.dpi ]
+	if [ -e /system/AdvBoot/orig.prop ]
 	then
-		DPIFLAG=$(grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f1)
-		ORIGDPI=$(grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
+		DPIFLAG=$(grep lcd_density= /system/AdvBoot/orig.prop | $BUSYBOX cut -d '=' -f1)
+		ORIGDPI=$(grep lcd_density= /system/AdvBoot/orig.prop | $BUSYBOX cut -d '=' -f2)
 		PREVDPI=$(grep lcd_density= /system/build.prop)
 		$BUSYBOX sed -i s/$PREVDPI/$DPIFLAG=$ORIGDPI/g /system/build.prop
-		rm -rf /system/AdvBoot/orig.dpi
+		rm -rf /system/AdvBoot/orig.prop
 		chmod 644 /system/build.prop
 	fi
 	if [ -e /system/bin/debuggerd2 ]

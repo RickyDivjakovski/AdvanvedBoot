@@ -38,6 +38,10 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	this option is for developers who prefer their rom not be modified by users but enable them to have the same
 	privelleges and also preserve their init.d tweaks for updates if secondary choice is on /sdcard.
 
+
+-Custom build id modding
+	this allows you to modify the buid display id in the boot.prefs file.
+
 	
 -Bootanimation and bootsounds
 	simple, you can enable or disable boot animation and sounds.
@@ -108,8 +112,7 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 
 -Custom DPI
 	enabling this allows dpi modding from the boot.prefs file.
-
-		
+	
 	
 -Use googles DNS server
 	enabling this will make the device use googles DNS server by default.

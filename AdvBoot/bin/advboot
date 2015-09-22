@@ -125,6 +125,8 @@ AdvancedBootInitd=$(grep AdvancedBootInitd= $BOOTPREFS | $BUSYBOX cut -d '=' -f2
 AdvancedBootInitdPath=$(grep AdvancedBootInitdPath= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootExternalInitd=$(grep AdvancedBootExternalInitd= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootExternalInitdPath=$(grep AdvancedBootExternalInitdPath= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootBuildIdModding=$(grep AdvancedBootBuildIdModding= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
+AdvancedBootCustomBuildId=$(grep AdvancedBootCustomBuildId= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableBootAnimation=$(grep AdvancedBootEnableBootAnimation= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootEnableBootSounds=$(grep AdvancedBootEnableBootSounds= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
 AdvancedBootVolume2Wake=$(grep AdvancedBootVolume2Wake= $BOOTPREFS | $BUSYBOX cut -d '=' -f2)
@@ -216,6 +218,36 @@ then
 			chmod -r 777 $AdvancedBootExternalInitdPath
 		fi
 	fi
+fi
+
+if [ $AdvancedBootBuildIdModding == 0 ]
+then
+	if [ -e /system/AdvBoot/orig.prop ]
+	then
+		BUILDIDFLAG=$(grep build.display.id= /system/AdvBoot/orig.prop | $BUSYBOX cut -d '=' -f1)
+		ORIGBUILDID=$(grep build.display.id= /system/AdvBoot/orig.prop | $BUSYBOX cut -d '=' -f2)
+		PREVBUILDID=$(grep build.display.id= /system/build.prop)
+		$BUSYBOX sed -i s/$PREVBUILDID/$BUILDIDFLAG=$ORIGBUILDID/g /system/build.prop
+		rm -rf /system/AdvBoot/orig.prop
+		chmod 644 /system/build.prop
+	fi
+else
+	chmod 644 /system/build.prop
+fi
+
+if [ $AdvancedBootBuildIdModding == 1 ]
+then
+	BUILDIDFLAG=$(grep build.display.id= /system/build.prop | $BUSYBOX cut -d '=' -f1)
+	PREVBUILDID=$(grep build.display.id= /system/build.prop | $BUSYBOX cut -d '=' -f2)
+	if [ -e /system/AdvBoot/orig.prop ]
+	then
+		$BUSYBOX sed -i s/$BUILDIDFLAG=$PREVBUILDID/$BUILDIDFLAG=$AdvancedBootCustomBuildId/g /system/build.prop
+	else
+		echo "$BUILDIDFLAG=$PREVBUILDID" > /system/AdvBoot/orig.prop
+		$BUSYBOX sed -i s/$BUILDIDFLAG=$PREVBUILDID/$BUILDIDFLAG=$AdvancedBootCustomBuildId/g /system/build.prop
+	fi
+	chmod 644 /system/build.prop
+	echo "applied custom build id $AdvancedBootCustomBuildId" >> $ADVBOOT_LOG
 fi
 
 if [ $AdvancedBootEnableBootAnimation == 0 ]
@@ -435,13 +467,13 @@ fi
 
 if [ $AdvancedBootDpiModding == 0 ]
 then
-	if [ -e /system/AdvBoot/orig.dpi ]
+	if [ -e /system/AdvBoot/orig.prop ]
 	then
-		DPIFLAG=$(grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f1)
-		ORIGDPI=$(grep lcd_density= /system/AdvBoot/orig.dpi | $BUSYBOX cut -d '=' -f2)
+		DPIFLAG=$(grep lcd_density= /system/AdvBoot/orig.prop | $BUSYBOX cut -d '=' -f1)
+		ORIGDPI=$(grep lcd_density= /system/AdvBoot/orig.prop | $BUSYBOX cut -d '=' -f2)
 		PREVDPI=$(grep lcd_density= /system/build.prop)
 		$BUSYBOX sed -i s/$PREVDPI/$DPIFLAG=$ORIGDPI/g /system/build.prop
-		rm -rf /system/AdvBoot/orig.dpi
+		rm -rf /system/AdvBoot/orig.prop
 		chmod 644 /system/build.prop
 	fi
 else
@@ -452,15 +484,14 @@ if [ $AdvancedBootDpiModding == 1 ]
 then
 	DPIFLAG=$(grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f1)
 	PREVDPI=$(grep lcd_density= /system/build.prop | $BUSYBOX cut -d '=' -f2)
-	if [ -e /system/AdvBoot/orig.dpi ]
+	if [ -e /system/AdvBoot/orig.prop ]
 	then
 		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
-		chmod 644 /system/build.prop
 	else
-		echo "$DPIFLAG=$PREVDPI" >> /system/AdvBoot/orig.dpi
+		echo "$DPIFLAG=$PREVDPI" >> /system/AdvBoot/orig.prop
 		$BUSYBOX sed -i s/$DPIFLAG=$PREVDPI/$DPIFLAG=$AdvancedBootCustomDpi/g /system/build.prop
-		chmod 644 /system/build.prop
 	fi
+	chmod 644 /system/build.prop
 	echo "applied custom dpi $AdvancedBootCustomDpi" >> $ADVBOOT_LOG
 fi
 

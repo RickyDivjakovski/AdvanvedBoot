@@ -19,6 +19,10 @@
 	AdvancedBootExternalInitd=0
 	AdvancedBootExternalInitdPath=/sdcard/init.d
 
+# enable/disable custom build id
+	AdvancedBootBuildIdModding=1
+	AdvancedBootCustomBuildId=Advanced-Boot-Modified-Rom
+
 # enable/disable bootanimation and bootsounds
 	AdvancedBootEnableBootAnimation=1
 	AdvancedBootEnableBootSounds=1
