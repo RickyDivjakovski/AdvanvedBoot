@@ -170,12 +170,12 @@ AdvancedBootEnableDataAutomount=$(grep AdvancedBootEnableDataAutomount= $BOOTPRE
 if [ $AdvancedBootSchedulersHere == "SCHEDULERSHERE" ]
 then
 	$BUSYBOX sed -i s/$AdvancedBootSchedulersHere/$AdvancedBootAvailableSchedulers/g $BOOTPREFS
-fi	
+fi
 
 if [ $AdvancedBootGovernorsHere == "GOVERNORSHERE" ]
 then
 	$BUSYBOX sed -i s/$AdvancedBootGovernorsHere/$AdvancedBootAvailableGovernors/g $BOOTPREFS
-fi	
+fi
 
 
 
@@ -197,7 +197,7 @@ then
 			chmod -r 777 $AdvancedBootInitdPath
 		fi
 	fi
-fi	
+fi
 if [ $AdvancedBootExternalInitd == 1 ]
 then
 	if [ -e /system/AdvBoot/extinitran ]
@@ -216,13 +216,13 @@ then
 			chmod -r 777 $AdvancedBootExternalInitdPath
 		fi
 	fi
-fi	
+fi
 
 if [ $AdvancedBootEnableBootAnimation == 0 ]
 then
 	echo "disabling boot animation" >> $ADVBOOT_LOG
 	setprop debug.sf.nobootanimation 1
-fi	
+fi
 
 if [ $AdvancedBootEnableBootSounds == 0 ]
 then
@@ -234,7 +234,7 @@ then
 	then
 		mv "/system/media/audio/ui/PowerOff.ogg.adv" "/system/media/audio/ui/PowerOff.ogg"
 	fi
-fi	
+fi
 if [ $AdvancedBootEnableBootSounds == 1 ]
 then
 	if [ -e /system/media/audio/ui/PowerOn.ogg ]
@@ -245,13 +245,13 @@ then
 	then
 		mv "/system/media/audio/ui/PowerOff.ogg" "/system/media/audio/ui/PowerOff.ogg.adv"
 	fi
-fi	
+fi
 
 if [ $AdvancedBootVolume2Wake == 0 ]
 then
 	echo "disabling volume2wake device feature" >> $ADVBOOT_LOG
 	setprop ro.config.hwfeature_wakeupkey 0
-fi	
+fi
 
 if [ $AdvancedBootNoCallDelay == 1 ]
 then
@@ -260,7 +260,7 @@ then
 	setprop mot.proximity.delay 25
 	setprop ro.telephony.call_ring.delay 0
 	setprop ring.delay 0
-fi	
+fi
 
 if [ $AdvancedBootImproveMediaQuallity == 1 ]
 then
@@ -272,18 +272,18 @@ then
 	setprop ro.media.panorama.frameres 1280x720
 	setprop ro.camcorder.videoModes true
 	setprop debug.sf.hw 1
-fi	
+fi
 
 if [ $AdvancedBootEnableWmaPlayback == 1 ]
 then
 	echo "enabling WMA audio playback" >> $ADVBOOT_LOG
 	setprop ro.media.dec.aud.wma.enabled 1
-fi	
+fi
 if [ $AdvancedBootEnableWmvPlayback == 1 ]
 then
 	echo "enabling WMV vidio playback" >> $ADVBOOT_LOG
 	setprop ro.media.dec.vid.wmv.enabled 1
-fi	
+fi
 
 if [ $AdvancedBootEnableFasterStreaming == 1 ]
 then
@@ -293,13 +293,13 @@ then
 	setprop media.stagefright.enable-scan true
 	setprop media.stagefright.enable-http true
 	setprop media.stagefright.enable-record false
-fi	
+fi
 
 if [ $AdvancedBootEnableAdbNotification == 0 ]
 then
 	echo "disabling system ADB notification" >> $ADVBOOT_LOG
 	setprop "persist.adb.notify" 0
-fi	
+fi
 
 if [ $AdvancedBootBatteryTweaks == 1 ]
 then
@@ -310,19 +310,19 @@ then
 	setprop pm.sleep_mode 1
 	setprop ro.ril.disable.power.collapse 0
 	setprop ro.ril.fast.dormancy.rule 0
-fi	
+fi
 
 if [ $AdvancedBootLockLauncher == 1 ]
 then
 	echo "locking launcher into memory" >> $ADVBOOT_LOG
 	setprop ro.HOME_APP_ADJ 1
-fi	
+fi
 
 if [ $AdvancedBootSdcardReadAhead == 1 ]
 then
 	echo "applying sdcard readahead to $AdvancedBootSdcardReadAheadValue" >> $ADVBOOT_LOG
 	echo "$AdvancedBootSdcardReadAheadValue" > "/sys/devices/virtual/bdi/179:0/read_ahead_kb"
-fi	
+fi
 
 if [ $AdvancedBootEnableBackup == 1 ]
 then
@@ -335,7 +335,7 @@ then
 		fi
 	else
 		AdvancedBootBackupUserSettings=" "
-	fi	
+	fi
 	if [ $AdvancedBootBackupBatteryStats == 1 ]
 	then
 		echo "backing up battery stats" >> $ADVBOOT_LOG
@@ -345,7 +345,7 @@ then
 		fi
 	else
 		AdvancedBootBackupBatteryStats=" "
-	fi	
+	fi
 	if [ $AdvancedBootBackupPhilzSettings == 1 ]
 	then
 		echo "backing up philz settings" >> $ADVBOOT_LOG
@@ -364,7 +364,7 @@ then
 		fi
 	else
 		AdvancedBootBackupPhilzSettings=" "
-	fi	
+	fi
 	if [ $AdvancedBootBackupDownloadedApps == 1 ]
 	then
 		echo "backing up downloaded apps" >> $ADVBOOT_LOG
@@ -374,7 +374,7 @@ then
 		fi
 	else
 		AdvancedBootBackupDownloadedApps=" "
-	fi	
+	fi
 	if [ $AdvancedBootBackupBluetoothSettings == 1 ]
 	then
 		echo "backing up bluetooth settings" >> $ADVBOOT_LOG
@@ -393,7 +393,7 @@ then
 		fi
 	else
 		AdvancedBootBackupBluetoothSettings=" "
-	fi	
+	fi
 	if [ $AdvancedBootBackupWifiSettings == 1 ]
 	then
 		echo "backing up wifi settings" >> $ADVBOOT_LOG
@@ -403,7 +403,7 @@ then
 		fi
 	else
 		AdvancedBootBackupWifiSettings=" "
-	fi	
+	fi
 	if [ -e $ADVBOOT_BACKUP ]
 	then
 		rm -rf $ADVBOOT_BACKUP
@@ -431,7 +431,7 @@ then
 		echo "cache $CACHESIZE is too small" >> $ADVBOOT_LOG
 		echo "skipping dalvik-cache to cache" >> $ADVBOOT_LOG
 	fi
-fi	
+fi
 
 if [ $AdvancedBootDpiModding == 0 ]
 then
@@ -471,14 +471,14 @@ then
 	setprop net.dns2 8.8.4.4 
 	setprop net.ppp0.dns1 8.8.8.8
 	setprop net.ppp0.dns2 8.8.4.4 
-fi	
+fi
 
 if [ $AdvancedBootEnableFastReboot == 1 ]
 then
 	echo "enabling fast reboot" >> $ADVBOOT_LOG
 	setprop persist.sys.shutdown.mode hibernate
 	setprop ro.config.hw_quickpoweron true
-fi	
+fi
 
 if [ $AdvancedBootIncreaseResponse == 1 ]
 then
@@ -488,7 +488,7 @@ then
 	setprop ro.min.fling_velocity 9000
 	setprop debug.performance.tuning 1
 	setprop video.accelerate.hw 1
-fi	
+fi
 
 if [ $AdvancedBootSysPerformanceTweaks == 1 ]
 then
@@ -504,21 +504,21 @@ then
 	setprop profiler.force_disable_err_rpt 1
 	setprop profiler.force_disable_ulog 1
 	setprop ro.mot.eri.losalert.delay 1000
-fi	
+fi
 
 if [ $AdvancedBootEnableDalvikBitcode == 0 ]
 then
 	echo "disabling dalvik bitcode verification" >> $ADVBOOT_LOG
 	setprop dalvik.vm.verify-bytecode false
 	setprop dalvik.vm.dexopt-flags v=n,o=v
-fi	
+fi
 
 if [ $AdvancedBootSchedulerModding == 1 ]
 then
 	echo Changing scheduler to $AdvancedBootCustomScheduler >> $ADVBOOT_LOG
 	echo $AdvancedBootCustomScheduler > /sys/block/mmcblk0/queue/scheduler
 	echo $AdvancedBootCustomScheduler > /sys/block/mmcblk1/queue/scheduler
-fi	
+fi
 
 if [ $AdvancedBootGovernorModding == 1 ]
 then
@@ -527,13 +527,13 @@ then
 	echo $AdvancedBootCustomGovernor > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
 	echo $AdvancedBootCustomGovernor > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	echo $AdvancedBootCustomGovernor > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
-fi	
+fi
 
 if [ $AdvancedBootLogging == 0 ]
 then
 	echo "disabling device logging" >> $ADVBOOT_LOG
 	rm -rf /dev/log/main
-fi	
+fi
 
 echo "advanced boot finished $date" >> $ADVBOOT_LOG
 echo  >> $ADVBOOT_LOG
@@ -574,4 +574,3 @@ else
 fi
 
 exit 
-	

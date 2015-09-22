@@ -25,7 +25,8 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 
 
 -User configuration
-	enabling user configuration will apply preferences from /sdcard/boot.prefs if found.
+	enabling user configuration will apply preferences from /sdcard/AdvancedBoot/boot.prefs if found.
+	if not found it will copy it there if user configuration is enabled.
 
 
 -Init.d
@@ -48,7 +49,7 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 	
 	
 -No call delay
-	if you enable this you remove the short delay before making a phone call
+	if you enable this you remove the short delay before making a phone call.
 	
 	
 -Improving image, audio and video quallity
@@ -152,5 +153,5 @@ note:	if enabled default boot.prefs will be copied on first boot to /sdcard/boot
 
 	
 -To Do List
-	make Advanced Boot Configuration app
+	make Advanced Boot Configuration app.
 	
